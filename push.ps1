@@ -10,20 +10,44 @@ Write-Host "  ODPC10-LSS Git Auto-Push to GitHub" -ForegroundColor Cyan
 Write-Host "  Repository: https://github.com/chanachai-tar/law-system" -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
+# 1. ตรวจสอบการเปลี่ยนแปลงไฟล์ในระบบ
+$status = git status --porcelain
+if (-not $status) {
+    Write-Host "`n[INFO] No changes detected. All files are up to date with GitHub." -ForegroundColor Green
+    exit 0
+}
+
+# 2. วิเคราะห์รายการไฟล์ที่ถูกแก้ไขอัตโนมัติ (ไม่ต้องพิมพ์เพิ่ม)
 if (-not $Message) {
     $currentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $inputMsg = Read-Host "Commit Message (Press Enter for auto-date)"
-    if (-not $inputMsg) {
-        $Message = "Update law-system: $currentTime"
-    } else {
-        $Message = $inputMsg
+    
+    $changes = @()
+    foreach ($line in ($status -split "`n")) {
+        $trimmed = $line.Trim()
+        if ($trimmed.Length -ge 3) {
+            $file = $trimmed.Substring(2).Trim()
+            $fileName = [System.IO.Path]::GetFileName($file)
+            if ($fileName) {
+                $changes += $fileName
+            }
+        }
     }
+
+    $changeCount = $changes.Count
+    $sampleFiles = ($changes | Select-Object -Unique -First 5) -join ", "
+    if ($changes.Count -gt 5) {
+        $sampleFiles += "..."
+    }
+
+    $Message = "Auto-update ($currentTime): $changeCount files ($sampleFiles)"
 }
+
+Write-Host "`n[Auto-Detected] $Message" -ForegroundColor Cyan
 
 Write-Host "`n[1/3] Git Add..." -ForegroundColor Yellow
 git add .
 
-Write-Host "[2/3] Git Commit ($Message)..." -ForegroundColor Yellow
+Write-Host "[2/3] Git Commit..." -ForegroundColor Yellow
 git commit -m "$Message"
 
 Write-Host "[3/3] Git Push to GitHub..." -ForegroundColor Yellow

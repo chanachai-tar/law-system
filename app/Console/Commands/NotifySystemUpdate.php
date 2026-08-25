@@ -31,16 +31,16 @@ class NotifySystemUpdate extends Command
         $updateMsg = $this->argument('message');
 
         if (empty($updateMsg)) {
-            $updateMsg = $this->ask('กรุณาระบุรายละเอียดการอัปเดตระบบ (กด Enter เพื่อใช้ค่าเริ่มต้น)', 'อัปเดตและปรับปรุงประสิทธิภาพระบบงานสำนวนกฎหมาย สคร.10');
+            $updateMsg = 'อัปเดตและปรับปรุงระบบงานสำนวนกฎหมาย สคร.10 อัตโนมัติ';
         }
 
         $now = thaidate(now(), 'full');
         $appUrl = config('app.url', 'http://192.168.13.71:8000');
 
-        $msg = "🚀 <b>[แจ้งเตือนการอัปเดตระบบ] {$groupName}</b>\n";
+        $msg = "🚀 <b>[แจ้งเตือนการอัปเดตระบบอัตโนมัติ] {$groupName}</b>\n";
         $msg .= "🏛️ สำนักงานป้องกันควบคุมโรคที่ 10 จังหวัดอุบลราชธานี\n\n";
         $msg .= "📦 <b>เวอร์ชัน:</b> <code>v{$version}</code>\n";
-        $msg .= "✨ <b>รายละเอียดการปรับปรุง:</b>\n";
+        $msg .= "📝 <b>สิ่งที่ได้รับการแก้ไข (Auto Summary):</b>\n";
         $msg .= "👉 <i>{$updateMsg}</i>\n\n";
         $msg .= "🕒 <b>เวลาอัปเดต:</b> {$now}\n";
         $msg .= "🔗 <b>เข้าสู่ระบบ:</b> {$appUrl}";
