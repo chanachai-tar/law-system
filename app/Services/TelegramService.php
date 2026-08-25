@@ -34,9 +34,9 @@ class TelegramService
     /**
      * Send a raw text message to Telegram Bot / Group
      */
-    public static function sendMessage(string $message, ?string $chatId = null): array
+    public static function sendMessage(string $message, ?string $chatId = null, ?string $customBotToken = null): array
     {
-        $botToken = self::getBotToken();
+        $botToken = $customBotToken ?: self::getBotToken();
         $targetChatId = $chatId ?: self::getChatId();
 
         if (empty($botToken)) {

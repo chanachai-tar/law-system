@@ -47,7 +47,10 @@ class NotifySystemUpdate extends Command
 
         $this->info("กำลังส่งข้อความแจ้งเตือนไปยังกลุ่ม Telegram [{$groupName}]...");
 
-        $result = TelegramService::sendMessage($msg);
+        $gitBotToken = env('GIT_TELEGRAM_BOT_TOKEN', '8807181650:AAG1iN8jAZIPCI8Nro-KAnB1ieviH2fQhcg');
+        $gitChatId   = env('GIT_TELEGRAM_CHAT_ID', '-5531101792');
+
+        $result = TelegramService::sendMessage($msg, $gitChatId, $gitBotToken);
 
         if ($result['success'] ?? false) {
             $this->info("✅ " . ($result['message'] ?? 'ส่งข้อความแจ้งเตือนสำเร็จ!'));
