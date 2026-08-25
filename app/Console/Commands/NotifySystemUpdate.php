@@ -41,7 +41,8 @@ class NotifySystemUpdate extends Command
         $repoUrl   = "https://github.com/{$repoName}";
         $commitUrl = "https://github.com/{$repoName}/commit/{$commit}";
 
-        $msg = "🚀 <b>[LSS Updated on GitHub]</b>\n\n";
+        $msg = "🚀 <b>[LSS Updated on GitHub]</b>\n";
+        $msg .= "🏛️ <b>ระบบ :</b> ระบบงานสารบรรณและทะเบียนสำนวนกฎหมาย (ODPC10-LSS)\n\n";
         $msg .= "🏷️ <b>Version:</b> <code>v{$version}</code>\n";
         $msg .= "🌿 <b>Branch:</b> <code>{$branch}</code>\n";
         $msg .= "👤 <b>Author:</b> {$author}\n";
