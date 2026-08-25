@@ -3,40 +3,41 @@ param (
 )
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "  ODPC10-LSS Git Auto-Push to GitHub" -ForegroundColor Cyan
 Write-Host "  Repository: https://github.com/chanachai-tar/law-system" -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
-if ([string]::IsNullOrWhiteSpace($Message)) {
+if (-not $Message) {
     $currentTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $inputMsg = Read-Host "ระบุข้อความอธิบายการแก้ไข (กด Enter เพื่อใช้ค่าเริ่มต้น)"
-    if ([string]::IsNullOrWhiteSpace($inputMsg)) {
+    $inputMsg = Read-Host "Commit Message (Press Enter for auto-date)"
+    if (-not $inputMsg) {
         $Message = "Update law-system: $currentTime"
     } else {
         $Message = $inputMsg
     }
 }
 
-Write-Host "`n[1/3] กำลังเตรียมไฟล์ (git add .)..." -ForegroundColor Yellow
+Write-Host "`n[1/3] Git Add..." -ForegroundColor Yellow
 git add .
 
-Write-Host "[2/3] กำลังบันทึกการแก้ไข (git commit)..." -ForegroundColor Yellow
+Write-Host "[2/3] Git Commit ($Message)..." -ForegroundColor Yellow
 git commit -m "$Message"
 
-Write-Host "[3/3] กำลังส่งขึ้น GitHub (git push)..." -ForegroundColor Yellow
+Write-Host "[3/3] Git Push to GitHub..." -ForegroundColor Yellow
 git push origin main
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n========================================================" -ForegroundColor Green
-    Write-Host "  [SUCCESS] อัปโหลดโปรเจกต์ขึ้น GitHub สำเร็จเรียบร้อยแล้ว!" -ForegroundColor Green
+    Write-Host "  [SUCCESS] Uploaded to GitHub successfully!" -ForegroundColor Green
     Write-Host "========================================================`n" -ForegroundColor Green
 
-    Write-Host "กำลังส่งการแจ้งเตือนไปยังกลุ่ม Telegram..." -ForegroundColor Magenta
+    Write-Host "Sending Telegram update notification..." -ForegroundColor Magenta
     php artisan app:notify-update "$Message"
 } else {
     Write-Host "`n========================================================" -ForegroundColor Red
-    Write-Host "  [ERROR] เกิดข้อผิดพลาดในการอัปโหลด" -ForegroundColor Red
+    Write-Host "  [ERROR] Git push failed." -ForegroundColor Red
     Write-Host "========================================================`n" -ForegroundColor Red
 }
