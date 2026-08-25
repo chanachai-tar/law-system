@@ -6,6 +6,10 @@
     $garudaPath = public_path('images/garuda_logo.png');
     $garudaBase64 = file_exists($garudaPath) ? base64_encode(file_get_contents($garudaPath)) : '';
     $garudaDataUri = $garudaBase64 ? 'data:image/png;base64,' . $garudaBase64 : asset('images/garuda_logo.png');
+    
+    $qrPath = public_path('images/telegram_qr.png');
+    $qrBase64 = file_exists($qrPath) ? base64_encode(file_get_contents($qrPath)) : '';
+    $qrDataUri = $qrBase64 ? 'data:image/png;base64,' . $qrBase64 : asset('images/telegram_qr.png');
 @endphp
 
 @section('header_title')
@@ -15,7 +19,7 @@
 
 @section('content')
 <style>
-    /* 1. โหลดฟอนต์ราชการ TH Sarabun New จาก Local Server โดยตรง */
+    /* 1. โหลดฟอนต์มาตรฐานราชการ TH Sarabun New แท้ 100% */
     @font-face {
         font-family: 'TH Sarabun New';
         src: url('{{ asset('fonts/THSarabunNew.ttf') }}') format('truetype');
@@ -45,7 +49,7 @@
         font-display: swap;
     }
 
-    /* 2. บังคับใช้ฟอนต์ TH Sarabun New ในเอกสารบันทึกข้อความ */
+    /* 2. บังคับใช้ฟอนต์ TH Sarabun New ตามระเบียบสำนักนายกรัฐมนตรีฯ */
     .thai-gov-memo,
     .thai-gov-memo * {
         font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif !important;
@@ -64,27 +68,29 @@
         font-size: 29pt !important;
         font-weight: bold !important;
         line-height: 1 !important;
+        margin: 0;
+        padding: 0;
     }
 
     .thai-gov-memo p {
         font-size: 16pt !important;
         line-height: 1.2 !important;
         margin-top: 0;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.35rem;
     }
 
     .thai-gov-memo table.data-table {
         font-size: 14pt !important;
         border-collapse: collapse !important;
         width: 100% !important;
-        margin-top: 0.4rem;
-        margin-bottom: 0.4rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 
     .thai-gov-memo table.data-table th,
     .thai-gov-memo table.data-table td {
         font-size: 14pt !important;
-        padding: 3px 6px !important;
+        padding: 4px 6px !important;
         border: 1px solid #000000 !important;
         color: #000000 !important;
         line-height: 1.15 !important;
@@ -146,7 +152,7 @@
         }
     }
 
-    /* ระยะขอบแสดงผลบนหน้าจอ A4 Preview */
+    /* ระยะขอบแสดงผลบนหน้าจอ A4 Preview เสมือนกระดาษจริง */
     .memo-page-preview {
         padding-top: 25mm;
         padding-bottom: 20mm;
@@ -167,7 +173,7 @@
         <div class="space-y-1">
             <div class="flex items-center gap-2">
                 <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                    แบบบันทึกข้อความราชการ (TH Sarabun New)
+                    แบบบันทึกข้อความราชการ (มาตรฐานกรมควบคุมโรค)
                 </span>
                 <span class="text-xs text-slate-500 font-medium">ปีงบประมาณ พ.ศ. {{ $thaiYear }}</span>
             </div>
@@ -175,7 +181,7 @@
                 รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย
             </h2>
             <p class="text-xs text-slate-500">
-                ฟอนต์ TH Sarabun New ขนาด 16pt (หัวข้อ 29pt) • ขอบซ้าย 3 ซม. • บน 2.5 ซม. • ขวา/ล่าง 2 ซม.
+                แบบบันทึกข้อความมาตรฐานระเบียบสารบรรณ • ฟอนต์ TH Sarabun New 16pt (หัวข้อ 29pt)
             </p>
         </div>
 
@@ -217,191 +223,209 @@
         </div>
     </div>
 
-    <!-- Official Thai Government Memorandum Document (แบบบันทึกข้อความ) -->
-    <div id="memo-document" class="thai-gov-memo bg-white memo-page-preview rounded-3xl shadow-md border border-slate-200 text-black mx-auto max-w-4xl space-y-4 leading-relaxed">
+    <!-- Official Thai Government Memorandum Document (แบบบันทึกข้อความ กรมควบคุมโรค) -->
+    <div id="memo-document" class="thai-gov-memo bg-white memo-page-preview rounded-3xl shadow-md border border-slate-200 text-black mx-auto max-w-4xl space-y-3 leading-relaxed">
 
-        <!-- 1. Garuda Emblem & "บันทึกข้อความ" Title (จัดวางตามระเบียบงานสารบรรณ) -->
-        <table style="width: 100%; border: none !important; margin: 0 0 6px 0; border-collapse: collapse;">
+        <!-- 1. ตราครุฑ และ คำว่า "บันทึกข้อความ" (กึ่งกลางหน้ากระดาษ ตามแบบมาตรฐาน) -->
+        <table style="width: 100%; border: none !important; margin: 0 0 10px 0; border-collapse: collapse;">
             <tr style="border: none !important;">
-                <td style="width: 3.5cm; vertical-align: bottom; border: none !important; padding: 0;">
+                <td style="width: 3.5cm; vertical-align: top; border: none !important; padding: 0;">
                     <img src="{{ $garudaDataUri }}" alt="ตราครุฑ" style="height: 3.0cm; width: auto; display: block;">
                 </td>
-                <td style="text-align: center; vertical-align: bottom; border: none !important; padding-right: 3.5cm; padding-bottom: 2px;">
-                    <span style="font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif; font-size: 29pt; font-weight: bold; line-height: 1; display: inline-block;">
+                <td style="text-align: center; vertical-align: middle; border: none !important; padding-right: 3.5cm;">
+                    <h1 style="font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif; font-size: 29pt; font-weight: bold; line-height: 1; margin: 0; padding: 0;">
                         บันทึกข้อความ
-                    </span>
+                    </h1>
                 </td>
             </tr>
         </table>
 
-        <!-- 2. Official Metadata Header Fields (มาตรฐานสารบรรณแบบ ๒ ท้ายระเบียบฯ) -->
-        <table style="width: 100%; border: none !important; border-top: 2px solid #000000 !important; margin: 0 0 8px 0; border-collapse: collapse; font-size: 16pt;">
-            <tr style="border: none !important;">
-                <td colspan="2" style="border: none !important; padding: 4px 0 2px 0;">
-                    <span style="font-weight: bold;">ส่วนราชการ</span>&nbsp;&nbsp;กลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี โทร. ๐ ๔๕๓๒ ๒๐๒๐
-                </td>
-            </tr>
-            <tr style="border: none !important;">
-                <td style="width: 50%; border: none !important; padding: 2px 0; vertical-align: top;">
-                    <span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;สธ ๐๔๒๗.๑.๑/...................................
-                </td>
-                <td style="width: 50%; border: none !important; padding: 2px 0; vertical-align: top;">
-                    <span style="font-weight: bold;">วันที่</span>&nbsp;&nbsp;{{ thaidate(now(), 'thai_official') }}
-                </td>
-            </tr>
-            <tr style="border: none !important;">
-                <td colspan="2" style="border: none !important; padding: 2px 0;">
-                    <span style="font-weight: bold;">เรื่อง</span>&nbsp;&nbsp;รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }}
-                </td>
-            </tr>
-            <tr style="border: none !important;">
-                <td colspan="2" style="border: none !important; border-top: 1px solid #000000 !important; padding: 4px 0 2px 0;">
-                    <span style="font-weight: bold;">เรียน</span>&nbsp;&nbsp;ผู้อำนวยการสำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี
-                </td>
-            </tr>
-        </table>
-
-        <!-- 3. Memo Body Content -->
-        <div class="space-y-4 text-black font-normal leading-relaxed text-justify pt-1" style="font-size: 16pt;">
-
-            <!-- ข้อ ๑. ต้นเรื่อง -->
-            <div>
-                <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <span style="font-weight: bold;">๑. ต้นเรื่อง</span>&nbsp;&nbsp;ด้วยกลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี ได้ดำเนินการติดตาม กำกับ เร่งรัด และรวบรวมข้อมูลการดำเนินงานด้านสำนวนคดีและการดำเนินการทางกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }} เพื่อรายงานผลการปฏิบัติงานต่อผู้บริหารตามระเบียบสารบรรณและระเบียบที่เกี่ยวข้อง
-                </p>
+        <!-- 2. ข้อมูลส่วนราชการ (ตามแบบ ๒ ท้ายระเบียบสำนักนายกรัฐมนตรีฯ) -->
+        <div style="font-size: 16pt; line-height: 1.25; margin-bottom: 8px;">
+            <!-- ส่วนราชการ -->
+            <div style="display: flex; align-items: baseline; margin-bottom: 2px;">
+                <span style="font-weight: bold; white-space: nowrap; margin-right: 8px;">ส่วนราชการ</span>
+                <span>กลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี โทร. ๐ ๔๕๓๒ ๒๐๒๐</span>
             </div>
 
-            <!-- ข้อ ๒. ข้อมูลสถิติและผลการดำเนินงาน -->
-            <div>
-                <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <span style="font-weight: bold;">๒. ข้อมูลสถิติและผลการดำเนินงาน</span>&nbsp;&nbsp;ในรอบปีงบประมาณ พ.ศ. {{ $thaiYearNum }} มีสำนวนรับเข้าสู่ระบบรวมทั้งสิ้น <span style="font-weight: bold;">{{ thainum(number_format($statusStats['all'])) }}</span> เรื่อง โดยมีรายละเอียดสรุปผลการดำเนินงาน ดังนี้
-                </p>
-                <div class="space-y-0.5 mt-1" style="padding-left: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <p>๒.๑ สำนวนที่ดำเนินการเสร็จสิ้น จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['completed'])) }}</span> เรื่อง (คิดเป็นร้อยละ {{ thainum($statusStats['all'] > 0 ? round(($statusStats['completed'] / $statusStats['all']) * 100, 1) : 0) }})</p>
-                    <p>๒.๒ สำนวนที่อยู่ระหว่างดำเนินการ จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['pending'])) }}</span> เรื่อง</p>
-                    <p>๒.๓ ยอดเงินชดใช้/ความเสียหายทางละเมิดรวม จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['total_damage'], 2)) }}</span> บาท</p>
-                </div>
+            <!-- ที่ และ วันที่ -->
+            <table style="width: 100%; border: none !important; border-collapse: collapse; margin: 2px 0;">
+                <tr style="border: none !important;">
+                    <td style="width: 50%; border: none !important; padding: 0; vertical-align: baseline;">
+                        <span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;สธ ๐๔๒๗.๑.๑/...................................
+                    </td>
+                    <td style="width: 50%; border: none !important; padding: 0; vertical-align: baseline;">
+                        <span style="font-weight: bold;">วันที่</span>&nbsp;&nbsp;{{ thaidate(now(), 'thai_official') }}
+                    </td>
+                </tr>
+            </table>
 
-                <!-- ตารางที่ ๑ สรุปจำแนกประเภทสำนวน -->
-                <div class="mt-2.5 avoid-break">
-                    <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๑ สรุปจำนวนสำนวนจำแนกตามประเภทกฎหมาย</p>
-                    <table class="data-table text-center" style="font-size: 14pt;">
-                        <thead>
-                            <tr style="background-color: #f1f5f9; font-weight: bold;">
-                                <th style="text-align: left; padding: 3px 6px;">ประเภทสำนวน</th>
-                                <th style="width: 130px; padding: 3px 6px;">จำนวน (เรื่อง)</th>
-                                <th style="width: 130px; padding: 3px 6px;">ร้อยละ (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($typeStats as $label => $val)
-                                <tr>
-                                    <td style="text-align: left; padding: 3px 6px;">{{ $label }}</td>
-                                    <td style="font-weight: bold; padding: 3px 6px;">{{ thainum(number_format($val)) }}</td>
-                                    <td style="padding: 3px 6px;">{{ thainum(round(($val / ($statusStats['all'] ?: 1)) * 100, 1)) }}%</td>
-                                </tr>
-                            @endforeach
-                            <tr style="font-weight: bold; background-color: #f8fafc;">
-                                <td style="text-align: left; padding: 3px 6px;">รวมทั้งสิ้น</td>
-                                <td style="padding: 3px 6px;">{{ thainum(number_format($statusStats['all'])) }}</td>
-                                <td style="padding: 3px 6px;">๑๐๐.๐%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดี -->
-                @if($detailedCases->count() > 0)
-                <div class="mt-3 avoid-break">
-                    <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดีในรอบปีงบประมาณ ({{ thainum($detailedCases->count()) }} เรื่อง)</p>
-                    <table class="data-table text-left" style="font-size: 13pt;">
-                        <thead>
-                            <tr style="background-color: #f1f5f9; font-weight: bold; text-align: center;">
-                                <th style="width: 35px; padding: 3px;">ลำดับ</th>
-                                <th style="width: 120px; padding: 3px;">เลขที่สำนวน</th>
-                                <th style="padding: 3px;">เรื่อง / ผู้เกี่ยวข้อง</th>
-                                <th style="width: 110px; padding: 3px;">ประเภท</th>
-                                <th style="width: 80px; padding: 3px;">วันที่รับ</th>
-                                <th style="width: 75px; padding: 3px; text-align: center;">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($detailedCases as $idx => $case)
-                                <tr>
-                                    <td style="text-align: center; padding: 3px;">{{ thainum($idx + 1) }}</td>
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 3px;">{{ thainum($case->case_number) }}</td>
-                                    <td style="padding: 3px;">{{ $case->subject }}</td>
-                                    <td style="padding: 3px;">{{ law_type($case->law_type) }}</td>
-                                    <td style="white-space: nowrap; padding: 3px;">{{ thaidate($case->created_at, 'short') }}</td>
-                                    <td style="text-align: center; font-weight: bold; padding: 3px;">
-                                        {{ $case->status === 'completed' ? 'เสร็จสิ้น' : 'ดำเนินการ' }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @endif
+            <!-- เรื่อง -->
+            <div style="display: flex; align-items: baseline; margin-top: 2px; margin-bottom: 2px;">
+                <span style="font-weight: bold; white-space: nowrap; margin-right: 8px;">เรื่อง</span>
+                <span>รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }}</span>
             </div>
 
-            <!-- ข้อ ๓. ข้อพิจารณาและข้อเสนอ -->
-            <div class="avoid-break pt-1">
-                <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <span style="font-weight: bold;">๓. ข้อพิจารณาและข้อเสนอ</span>&nbsp;&nbsp;กลุ่มงานกฎหมาย เห็นควรรายงานสรุปผลการดำเนินงานสำนวนคดีดังกล่าวต่อผู้อำนวยการสำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี เพื่อโปรดทราบผลการปฏิบัติงาน และมอบหมายข้อสั่งการตามที่เห็นสมควรต่อไป
-                </p>
-                <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25; font-weight: bold; margin-top: 4px;">
+            <!-- เรียน -->
+            <div style="display: flex; align-items: baseline; margin-top: 2px;">
+                <span style="font-weight: bold; white-space: nowrap; margin-right: 8px;">เรียน</span>
+                <span>ผู้อำนวยการสำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี</span>
+            </div>
+        </div>
+
+        <!-- 3. เนื้อหาบันทึกข้อความ (ย่อหน้า 2.5 ซม. ตามแบบหนังสือราชการ) -->
+        <div style="font-size: 16pt; line-height: 1.25; text-align: justify; padding-top: 4px;">
+
+            <!-- ย่อหน้าที่ ๑ : ความเป็นมา / ต้นเรื่อง -->
+            <p style="text-indent: 2.5cm; margin-bottom: 6px;">
+                ด้วยกลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี ได้ดำเนินการติดตาม กำกับ เร่งรัด และรวบรวมข้อมูลการดำเนินงานด้านสำนวนคดีและการดำเนินการทางกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }} เพื่อรายงานผลการปฏิบัติงานต่อผู้บริหารตามระเบียบสารบรรณและระเบียบที่เกี่ยวข้อง
+            </p>
+
+            <!-- ย่อหน้าที่ ๒ : ข้อเท็จจริงและสถิติข้อมูล -->
+            <p style="text-indent: 2.5cm; margin-bottom: 4px;">
+                ในการนี้ กลุ่มงานกฎหมาย ขอรายงานสรุปผลการดำเนินงานในรอบปีงบประมาณ พ.ศ. {{ $thaiYearNum }} มีสำนวนรับเข้าสู่ระบบรวมทั้งสิ้น <span style="font-weight: bold;">{{ thainum(number_format($statusStats['all'])) }}</span> เรื่อง โดยมีรายละเอียดสรุปผลการดำเนินงาน ดังนี้
+            </p>
+
+            <div style="padding-left: 2.5cm; margin-bottom: 6px;">
+                <p style="margin-bottom: 2px;">๑) สำนวนที่ดำเนินการเสร็จสิ้น จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['completed'])) }}</span> เรื่อง (คิดเป็นร้อยละ {{ thainum($statusStats['all'] > 0 ? round(($statusStats['completed'] / $statusStats['all']) * 100, 1) : 0) }})</p>
+                <p style="margin-bottom: 2px;">๒) สำนวนที่อยู่ระหว่างดำเนินการ จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['pending'])) }}</span> เรื่อง</p>
+                <p style="margin-bottom: 2px;">๓) ยอดเงินชดใช้/ความเสียหายทางละเมิดรวม จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['total_damage'], 2)) }}</span> บาท</p>
+            </div>
+
+            <!-- ตารางที่ ๑ สรุปจำแนกประเภทสำนวน -->
+            <div class="avoid-break" style="margin-top: 6px; margin-bottom: 8px;">
+                <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๑ สรุปจำนวนสำนวนจำแนกตามประเภทกฎหมาย</p>
+                <table class="data-table text-center" style="font-size: 14pt;">
+                    <thead>
+                        <tr style="background-color: #f1f5f9; font-weight: bold;">
+                            <th style="text-align: left; padding: 3px 6px;">ประเภทสำนวน</th>
+                            <th style="width: 130px; padding: 3px 6px;">จำนวน (เรื่อง)</th>
+                            <th style="width: 130px; padding: 3px 6px;">ร้อยละ (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($typeStats as $label => $val)
+                            <tr>
+                                <td style="text-align: left; padding: 3px 6px;">{{ $label }}</td>
+                                <td style="font-weight: bold; padding: 3px 6px;">{{ thainum(number_format($val)) }}</td>
+                                <td style="padding: 3px 6px;">{{ thainum(round(($val / ($statusStats['all'] ?: 1)) * 100, 1)) }}%</td>
+                            </tr>
+                        @endforeach
+                        <tr style="font-weight: bold; background-color: #f8fafc;">
+                            <td style="text-align: left; padding: 3px 6px;">รวมทั้งสิ้น</td>
+                            <td style="padding: 3px 6px;">{{ thainum(number_format($statusStats['all'])) }}</td>
+                            <td style="padding: 3px 6px;">๑๐๐.๐%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดี -->
+            @if($detailedCases->count() > 0)
+            <div class="avoid-break" style="margin-top: 8px; margin-bottom: 8px;">
+                <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดีในรอบปีงบประมาณ ({{ thainum($detailedCases->count()) }} เรื่อง)</p>
+                <table class="data-table text-left" style="font-size: 13pt;">
+                    <thead>
+                        <tr style="background-color: #f1f5f9; font-weight: bold; text-align: center;">
+                            <th style="width: 35px; padding: 3px;">ลำดับ</th>
+                            <th style="width: 120px; padding: 3px;">เลขที่สำนวน</th>
+                            <th style="padding: 3px;">เรื่อง / ผู้เกี่ยวข้อง</th>
+                            <th style="width: 110px; padding: 3px;">ประเภท</th>
+                            <th style="width: 80px; padding: 3px;">วันที่รับ</th>
+                            <th style="width: 75px; padding: 3px; text-align: center;">สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($detailedCases as $idx => $case)
+                            <tr>
+                                <td style="text-align: center; padding: 3px;">{{ thainum($idx + 1) }}</td>
+                                <td style="font-weight: bold; white-space: nowrap; padding: 3px;">{{ thainum($case->case_number) }}</td>
+                                <td style="padding: 3px;">{{ $case->subject }}</td>
+                                <td style="padding: 3px;">{{ law_type($case->law_type) }}</td>
+                                <td style="white-space: nowrap; padding: 3px;">{{ thaidate($case->created_at, 'short') }}</td>
+                                <td style="text-align: center; font-weight: bold; padding: 3px;">
+                                    {{ $case->status === 'completed' ? 'เสร็จสิ้น' : 'ดำเนินการ' }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+
+            <!-- ย่อหน้าคำลงท้าย -->
+            <div class="avoid-break" style="padding-top: 4px;">
+                <p style="text-indent: 2.5cm; margin-bottom: 0;">
                     จึงเรียนมาเพื่อโปรดทราบและพิจารณา
                 </p>
             </div>
 
-            <!-- ลายมือชื่อนิติกรผู้จัดทำรายงาน -->
-            <div class="avoid-break pt-3 text-right" style="font-size: 16pt;">
-                <div class="inline-block text-center mr-8 space-y-0.5">
-                    <p>ลงชื่อ ................................................................</p>
-                    <p>( {{ Auth::user()->name ?? '................................................................' }} )</p>
-                    <p style="font-size: 14pt;">นิติกร / ผู้จัดทำรายงาน</p>
-                </div>
+            <!-- 4. ส่วนลงนาม (จัดวางเยื้องขวา กึ่งกลางตามแบบหนังสือราชการ) -->
+            <div class="avoid-break" style="padding-top: 18px; margin-bottom: 12px;">
+                <table style="width: 100%; border: none !important; border-collapse: collapse;">
+                    <tr style="border: none !important;">
+                        <!-- QR Code มุมล่างซ้าย (ถ้ามี) -->
+                        <td style="width: 45%; border: none !important; padding: 0; vertical-align: bottom;">
+                            <div style="display: inline-block; text-align: center; font-size: 11pt;">
+                                <img src="{{ $qrDataUri }}" alt="QR Code" style="height: 65px; width: 65px; object-fit: contain; margin: 0 auto;">
+                                <span style="display: block; margin-top: 2px;">กลุ่มงานกฎหมาย สคร.๑๐</span>
+                            </div>
+                        </td>
+                        <!-- ลายมือชื่อนิติกรผู้จัดทำรายงาน -->
+                        <td style="width: 55%; border: none !important; padding: 0; text-align: center; vertical-align: top;">
+                            <div style="display: inline-block; text-align: center; font-size: 16pt; line-height: 1.25;">
+                                <p style="margin-bottom: 2px;">(ลงชื่อ)................................................................</p>
+                                <p style="margin-bottom: 2px;">( {{ Auth::user()->name ?? '................................................................' }} )</p>
+                                <p style="font-size: 14pt; color: #333; margin-bottom: 0;">นิติกร / ผู้จัดทำรายงาน</p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
-            <!-- ส่วนความเห็นชอบและคำสั่งการของผู้อำนวยการ -->
-            <div class="avoid-break border-t-2 border-black pt-3 mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4" style="font-size: 14pt;">
-                <!-- ความเห็นหัวหน้ากลุ่มงาน -->
-                <div class="space-y-1.5">
-                    <p style="font-weight: bold;">ความเห็นของหัวหน้ากลุ่มงานกฎหมาย:</p>
-                    <p>...........................................................................................</p>
-                    <p>...........................................................................................</p>
-                    <div class="text-center pt-1 space-y-0.5">
-                        <p>ลงชื่อ ................................................................</p>
-                        <p>( ................................................................ )</p>
-                        <p style="font-size: 13pt;">หัวหน้ากลุ่มงานกฎหมาย</p>
-                        <p style="font-size: 13pt;">วันที่ ...... / ............ / ..........</p>
-                    </div>
-                </div>
+            <!-- 5. ส่วนความเห็นชอบและคำสั่งการของผู้บริหาร -->
+            <div class="avoid-break" style="border-top: 1px solid #000000; padding-top: 8px; margin-top: 8px;">
+                <table style="width: 100%; border: none !important; border-collapse: collapse; font-size: 14pt;">
+                    <tr style="border: none !important;">
+                        <!-- ความเห็นหัวหน้ากลุ่มงาน -->
+                        <td style="width: 50%; border: none !important; padding: 0 10px 0 0; vertical-align: top;">
+                            <p style="font-weight: bold; margin-bottom: 2px;">ความเห็นของหัวหน้ากลุ่มงานกฎหมาย:</p>
+                            <p style="margin-bottom: 2px;">...........................................................................................</p>
+                            <p style="margin-bottom: 4px;">...........................................................................................</p>
+                            <div style="text-align: center; padding-top: 4px; font-size: 13pt; line-height: 1.2;">
+                                <p style="margin-bottom: 2px;">(ลงชื่อ)................................................................</p>
+                                <p style="margin-bottom: 2px;">( ................................................................ )</p>
+                                <p style="margin-bottom: 2px;">หัวหน้ากลุ่มงานกฎหมาย</p>
+                                <p style="margin-bottom: 0;">วันที่ ...... / ............ / ..........</p>
+                            </div>
+                        </td>
 
-                <!-- คำสั่ง / ข้อสั่งการ ผอ.สคร.๑๐ -->
-                <div class="space-y-1.5 border-t sm:border-t-0 sm:border-l sm:border-black pt-2 sm:pt-0 sm:pl-4">
-                    <p style="font-weight: bold;">คำสั่ง / ข้อสั่งการ ผอ.สคร.๑๐ อุบลราชธานี:</p>
-                    <div class="space-y-0.5 pl-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="rounded border-black">
-                            <span>ทราบ</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="rounded border-black">
-                            <span>ดำเนินการตามเสนอ</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="rounded border-black">
-                            <span>อื่นๆ ......................................................................</span>
-                        </label>
-                    </div>
-                    <div class="text-center pt-1 space-y-0.5">
-                        <p>ลงชื่อ ................................................................</p>
-                        <p>( ................................................................ )</p>
-                        <p style="font-size: 13pt;">ผู้อำนวยการสำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี</p>
-                        <p style="font-size: 13pt;">วันที่ ...... / ............ / ..........</p>
-                    </div>
-                </div>
+                        <!-- คำสั่ง / ข้อสั่งการ ผอ.สคร.๑๐ -->
+                        <td style="width: 50%; border: none !important; border-left: 1px solid #000000 !important; padding: 0 0 0 12px; vertical-align: top;">
+                            <p style="font-weight: bold; margin-bottom: 2px;">คำสั่ง / ข้อสั่งการ ผอ.สคร.๑๐ อุบลราชธานี:</p>
+                            <div style="padding-left: 6px; margin-bottom: 4px; font-size: 13pt;">
+                                <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px; cursor: pointer;">
+                                    <input type="checkbox" style="border: 1px solid #000;">
+                                    <span>ทราบ</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px; cursor: pointer;">
+                                    <input type="checkbox" style="border: 1px solid #000;">
+                                    <span>ดำเนินการตามเสนอ</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 6px; margin-bottom: 0; cursor: pointer;">
+                                    <input type="checkbox" style="border: 1px solid #000;">
+                                    <span>อื่นๆ ................................................................</span>
+                                </label>
+                            </div>
+                            <div style="text-align: center; padding-top: 4px; font-size: 13pt; line-height: 1.2;">
+                                <p style="margin-bottom: 2px;">(ลงชื่อ)................................................................</p>
+                                <p style="margin-bottom: 2px;">( ................................................................ )</p>
+                                <p style="margin-bottom: 2px;">ผู้อำนวยการสำนักงานป้องกันควบคุมโรคที่ ๑๐</p>
+                                <p style="margin-bottom: 0;">วันที่ ...... / ............ / ..........</p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
         </div>
