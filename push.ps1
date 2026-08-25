@@ -32,6 +32,9 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "`n========================================================" -ForegroundColor Green
     Write-Host "  [SUCCESS] อัปโหลดโปรเจกต์ขึ้น GitHub สำเร็จเรียบร้อยแล้ว!" -ForegroundColor Green
     Write-Host "========================================================`n" -ForegroundColor Green
+
+    Write-Host "กำลังส่งการแจ้งเตือนไปยังกลุ่ม Telegram..." -ForegroundColor Magenta
+    php artisan app:notify-update "$Message"
 } else {
     Write-Host "`n========================================================" -ForegroundColor Red
     Write-Host "  [ERROR] เกิดข้อผิดพลาดในการอัปโหลด" -ForegroundColor Red
