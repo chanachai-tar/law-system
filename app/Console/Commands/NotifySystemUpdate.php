@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Services\TelegramService;
+
+class NotifySystemUpdate extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:notify-update {message? : รายละเอียดการอัปเดตระบบ} {--ver=1.0.0 : เวอร์ชั่นระบบ}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'ส่งข้อความแจ้งเตือนการอัปเดตระบบไปยังกลุ่ม Telegram (ODPC10-LSS)';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $groupName = TelegramService::getGroupName();
+        $version   = $this->option('ver') ?: '1.0.0';
+        $updateMsg = $this->argument('message');
+
+        if (empty($updateMsg)) {
+            $updateMsg = $this->ask('กรุณาระบุรายละเอียดการอัปเดตระบบ (กด Enter เพื่อใช้ค่าเริ่มต้น)', 'อัปเดตและปรับปรุงประสิทธิภาพระบบงานสำนวนกฎหมาย สคร.10');
+        }
+
+        $now = thaidate(now(), 'full');
+        $appUrl = config('app.url', 'http://192.168.13.71:8000');
+
+        $msg = "🚀 <b>[แจ้งเตือนการอัปเดตระบบ] {$groupName}</b>\n";
+        $msg .= "🏛️ สำนักงานป้องกันควบคุมโรคที่ 10 จังหวัดอุบลราชธานี\n\n";
+        $msg .= "📦 <b>เวอร์ชัน:</b> <code>v{$version}</code>\n";
+        $msg .= "✨ <b>รายละเอียดการปรับปรุง:</b>\n";
+        $msg .= "👉 <i>{$updateMsg}</i>\n\n";
+        $msg .= "🕒 <b>เวลาอัปเดต:</b> {$now}\n";
+        $msg .= "🔗 <b>เข้าสู่ระบบ:</b> {$appUrl}";
+
+        $this->info("กำลังส่งข้อความแจ้งเตือนไปยังกลุ่ม Telegram [{$groupName}]...");
+
+        $result = TelegramService::sendMessage($msg);
+
+        if ($result['success'] ?? false) {
+            $this->info("✅ " . ($result['message'] ?? 'ส่งข้อความแจ้งเตือนสำเร็จ!'));
+            return Command::SUCCESS;
+        } else {
+            $this->error("❌ " . ($result['message'] ?? 'เกิดข้อผิดพลาดในการส่งข้อความ'));
+            return Command::FAILURE;
+        }
+    }
+}
