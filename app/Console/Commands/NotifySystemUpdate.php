@@ -21,12 +21,13 @@ class NotifySystemUpdate extends Command
      */
     protected $description = 'ส่งข้อความแจ้งเตือนการอัปเดต Git ไปยังห้อง [Updated on GitHub] พร้อมปุ่มลิงก์ดูการเปลี่ยนแปลง';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $version   = $this->option('ver') ?: '1.0.0';
+        $version   = $this->option('ver');
+        if (empty($version) || $version === '1.0.0') {
+            $version = app_version();
+        }
+        $version   = ltrim($version, 'v');
         $updateMsg = $this->argument('message');
 
         if (empty($updateMsg)) {

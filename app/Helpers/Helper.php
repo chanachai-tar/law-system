@@ -98,3 +98,17 @@ if (!function_exists('law_type')) {
         return $types[$type] ?? 'ไม่ระบุประเภท';
     }
 }
+
+if (!function_exists('app_version')) {
+    function app_version()
+    {
+        $versionFile = base_path('version.json');
+        if (file_exists($versionFile)) {
+            $data = json_decode(file_get_contents($versionFile), true);
+            if (!empty($data['version'])) {
+                return 'v' . ltrim($data['version'], 'v');
+            }
+        }
+        return 'v1.0.0';
+    }
+}

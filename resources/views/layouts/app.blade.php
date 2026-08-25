@@ -64,7 +64,7 @@
                         <div class="flex items-center gap-1.5">
                             <span class="text-base font-extrabold text-slate-800 tracking-tight">ODPC10 <span class="text-indigo-600">LSS</span></span>
                             <span class="text-[10px] font-bold px-1.5 py-0.5 bg-indigo-50 text-indigo-700 rounded-md border border-indigo-100/80">
-                                v1.0
+                                {{ app_version() }}
                             </span>
                         </div>
                         <p class="text-[11px] font-semibold text-slate-500 leading-tight">ระบบงานสำนวนกฎหมาย</p>
