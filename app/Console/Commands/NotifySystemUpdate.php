@@ -30,19 +30,29 @@ class NotifySystemUpdate extends Command
         $updateMsg = $this->argument('message');
 
         if (empty($updateMsg)) {
-            $updateMsg = 'อัปเดตและปรับปรุงระบบงานสำนวนกฎหมาย (law-system)';
+            $updateMsg = 'อัปเดตและปรับปรุงประสิทธิภาพระบบงาน';
         }
 
-        // ดึงข้อมูล Git ล่าสุด
-        $branch    = trim(shell_exec('git rev-parse --abbrev-ref HEAD 2>nul') ?: 'main');
-        $author    = trim(shell_exec('git log -1 --pretty=format:"%an" 2>nul') ?: 'chanachai');
-        $commit    = trim(shell_exec('git log -1 --pretty=format:"%h" 2>nul') ?: 'latest');
-        $repoName  = 'chanachai-tar/law-system';
+        // ดึงข้อมูล Git แบบ Dynamic
+        $branch     = trim(shell_exec('git rev-parse --abbrev-ref HEAD 2>nul') ?: 'main');
+        $author     = trim(shell_exec('git log -1 --pretty=format:"%an" 2>nul') ?: 'chanachai');
+        $commit     = trim(shell_exec('git log -1 --pretty=format:"%h" 2>nul') ?: 'latest');
+        $repoRemote = trim(shell_exec('git config --get remote.origin.url 2>nul') ?: '');
+        
+        $repoName = 'chanachai-tar/law-system';
+        if (!empty($repoRemote) && preg_match('/github\.com[\/:](.+?)(?:\.git)?$/i', $repoRemote, $matches)) {
+            $repoName = $matches[1];
+        }
+
         $repoUrl   = "https://github.com/{$repoName}";
         $commitUrl = "https://github.com/{$repoName}/commit/{$commit}";
 
-        $msg = "🚀 <b>[LSS Updated on GitHub]</b>\n";
-        $msg .= "🏛️ <b>ระบบ :</b> ระบบงานสารบรรณและทะเบียนสำนวนกฎหมาย (ODPC10-LSS)\n\n";
+        // ชื่อย่อระบบแบบ Dynamic (เช่น LSS, OPD, LAB)
+        $shortName  = env('APP_SHORT_NAME') ?: (str_contains(strtolower($repoName), 'law') ? 'LSS' : (str_contains(strtolower($repoName), 'opd') ? 'OPD' : strtoupper(basename($repoName))));
+        $systemName = config('app.name', 'ระบบงานสารบรรณและทะเบียนสำนวนกฎหมาย (ODPC10-LSS)');
+
+        $msg = "🚀 <b>[{$shortName} Updated on GitHub]</b>\n";
+        $msg .= "🏛️ <b>ระบบ :</b> {$systemName}\n\n";
         $msg .= "🏷️ <b>Version:</b> <code>v{$version}</code>\n";
         $msg .= "🌿 <b>Branch:</b> <code>{$branch}</code>\n";
         $msg .= "👤 <b>Author:</b> {$author}\n";
