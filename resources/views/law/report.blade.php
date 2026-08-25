@@ -45,12 +45,13 @@
         font-display: swap;
     }
 
-    /* 2. บังคับใช้ฟอนต์ TH Sarabun New */
+    /* 2. บังคับใช้ฟอนต์ TH Sarabun New ในเอกสารบันทึกข้อความ */
     .thai-gov-memo,
     .thai-gov-memo * {
         font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        box-sizing: border-box;
     }
 
     .thai-gov-memo {
@@ -130,7 +131,7 @@
             width: 100% !important;
             max-width: 100% !important;
             margin: 0 !important;
-            padding: 0 !important; /* ปิด padding ใน print เพื่อไม่ให้เบิ้ลกับ @page margin */
+            padding: 0 !important;
             border: none !important;
             box-shadow: none !important;
             background: transparent !important;
@@ -162,7 +163,7 @@
 <div class="max-w-5xl mx-auto space-y-5">
 
     <!-- Top Action Toolbar (Screen View Only) -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 no-print bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-sm">
         <div class="space-y-1">
             <div class="flex items-center gap-2">
                 <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
@@ -219,7 +220,7 @@
     <!-- Official Thai Government Memorandum Document (แบบบันทึกข้อความ) -->
     <div id="memo-document" class="thai-gov-memo bg-white memo-page-preview rounded-3xl shadow-md border border-slate-200 text-black mx-auto max-w-4xl space-y-4 leading-relaxed">
 
-        <!-- 1. Garuda Emblem & "บันทึกข้อความ" Title (จัดวางด้วยตารางมาตรฐานราชการ) -->
+        <!-- 1. Garuda Emblem & "บันทึกข้อความ" Title (จัดวางตามระเบียบงานสารบรรณ) -->
         <table style="width: 100%; border: none !important; margin: 0 0 6px 0; border-collapse: collapse;">
             <tr style="border: none !important;">
                 <td style="width: 3.5cm; vertical-align: bottom; border: none !important; padding: 0;">
@@ -241,16 +242,16 @@
                 </td>
             </tr>
             <tr style="border: none !important;">
-                <td style="width: 55%; border: none !important; padding: 2px 0;">
-                    <span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;สธ ๐๔๒๗.๑.๑/.............................................
+                <td style="width: 50%; border: none !important; padding: 2px 0; vertical-align: top;">
+                    <span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;สธ ๐๔๒๗.๑.๑/...................................
                 </td>
-                <td style="width: 45%; border: none !important; padding: 2px 0;">
-                    <span style="font-weight: bold;">วันที่</span>&nbsp;&nbsp;{{ thaidate(now(), 'full') }}
+                <td style="width: 50%; border: none !important; padding: 2px 0; vertical-align: top;">
+                    <span style="font-weight: bold;">วันที่</span>&nbsp;&nbsp;{{ thaidate(now(), 'thai_official') }}
                 </td>
             </tr>
             <tr style="border: none !important;">
                 <td colspan="2" style="border: none !important; padding: 2px 0;">
-                    <span style="font-weight: bold;">เรื่อง</span>&nbsp;&nbsp;รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYear }}
+                    <span style="font-weight: bold;">เรื่อง</span>&nbsp;&nbsp;รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }}
                 </td>
             </tr>
             <tr style="border: none !important;">
@@ -266,19 +267,19 @@
             <!-- ข้อ ๑. ต้นเรื่อง -->
             <div>
                 <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <span style="font-weight: bold;">๑. ต้นเรื่อง</span>&nbsp;&nbsp;ด้วยกลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี ได้ดำเนินการติดตาม กำกับ เร่งรัด และรวบรวมข้อมูลการดำเนินงานด้านสำนวนคดีและการดำเนินการทางกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYear }} เพื่อรายงานผลการปฏิบัติงานต่อผู้บริหารตามระเบียบสารบรรณและระเบียบที่เกี่ยวข้อง
+                    <span style="font-weight: bold;">๑. ต้นเรื่อง</span>&nbsp;&nbsp;ด้วยกลุ่มงานกฎหมาย สำนักงานป้องกันควบคุมโรคที่ ๑๐ จังหวัดอุบลราชธานี ได้ดำเนินการติดตาม กำกับ เร่งรัด และรวบรวมข้อมูลการดำเนินงานด้านสำนวนคดีและการดำเนินการทางกฎหมาย ประจำปีงบประมาณ พ.ศ. {{ $thaiYearNum }} เพื่อรายงานผลการปฏิบัติงานต่อผู้บริหารตามระเบียบสารบรรณและระเบียบที่เกี่ยวข้อง
                 </p>
             </div>
 
             <!-- ข้อ ๒. ข้อมูลสถิติและผลการดำเนินงาน -->
             <div>
                 <p style="text-indent: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <span style="font-weight: bold;">๒. ข้อมูลสถิติและผลการดำเนินงาน</span>&nbsp;&nbsp;ในรอบปีงบประมาณ พ.ศ. {{ $thaiYear }} มีสำนวนรับเข้าสู่ระบบรวมทั้งสิ้น <span style="font-weight: bold;">{{ number_format($statusStats['all']) }}</span> เรื่อง โดยมีรายละเอียดสรุปผลการดำเนินงาน ดังนี้
+                    <span style="font-weight: bold;">๒. ข้อมูลสถิติและผลการดำเนินงาน</span>&nbsp;&nbsp;ในรอบปีงบประมาณ พ.ศ. {{ $thaiYearNum }} มีสำนวนรับเข้าสู่ระบบรวมทั้งสิ้น <span style="font-weight: bold;">{{ thainum(number_format($statusStats['all'])) }}</span> เรื่อง โดยมีรายละเอียดสรุปผลการดำเนินงาน ดังนี้
                 </p>
                 <div class="space-y-0.5 mt-1" style="padding-left: 2.5cm; font-size: 16pt; line-height: 1.25;">
-                    <p>๒.๑ สำนวนที่ดำเนินการเสร็จสิ้น จำนวน <span style="font-weight: bold;">{{ number_format($statusStats['completed']) }}</span> เรื่อง (คิดเป็นร้อยละ {{ $statusStats['all'] > 0 ? round(($statusStats['completed'] / $statusStats['all']) * 100, 1) : 0 }})</p>
-                    <p>๒.๒ สำนวนที่อยู่ระหว่างดำเนินการ จำนวน <span style="font-weight: bold;">{{ number_format($statusStats['pending']) }}</span> เรื่อง</p>
-                    <p>๒.๓ ยอดเงินชดใช้/ความเสียหายทางละเมิดรวม จำนวน <span style="font-weight: bold;">{{ number_format($statusStats['total_damage'], 2) }}</span> บาท</p>
+                    <p>๒.๑ สำนวนที่ดำเนินการเสร็จสิ้น จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['completed'])) }}</span> เรื่อง (คิดเป็นร้อยละ {{ thainum($statusStats['all'] > 0 ? round(($statusStats['completed'] / $statusStats['all']) * 100, 1) : 0) }})</p>
+                    <p>๒.๒ สำนวนที่อยู่ระหว่างดำเนินการ จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['pending'])) }}</span> เรื่อง</p>
+                    <p>๒.๓ ยอดเงินชดใช้/ความเสียหายทางละเมิดรวม จำนวน <span style="font-weight: bold;">{{ thainum(number_format($statusStats['total_damage'], 2)) }}</span> บาท</p>
                 </div>
 
                 <!-- ตารางที่ ๑ สรุปจำแนกประเภทสำนวน -->
@@ -296,14 +297,14 @@
                             @foreach ($typeStats as $label => $val)
                                 <tr>
                                     <td style="text-align: left; padding: 3px 6px;">{{ $label }}</td>
-                                    <td style="font-weight: bold; padding: 3px 6px;">{{ number_format($val) }}</td>
-                                    <td style="padding: 3px 6px;">{{ round(($val / ($statusStats['all'] ?: 1)) * 100, 1) }}%</td>
+                                    <td style="font-weight: bold; padding: 3px 6px;">{{ thainum(number_format($val)) }}</td>
+                                    <td style="padding: 3px 6px;">{{ thainum(round(($val / ($statusStats['all'] ?: 1)) * 100, 1)) }}%</td>
                                 </tr>
                             @endforeach
                             <tr style="font-weight: bold; background-color: #f8fafc;">
                                 <td style="text-align: left; padding: 3px 6px;">รวมทั้งสิ้น</td>
-                                <td style="padding: 3px 6px;">{{ number_format($statusStats['all']) }}</td>
-                                <td style="padding: 3px 6px;">100.0%</td>
+                                <td style="padding: 3px 6px;">{{ thainum(number_format($statusStats['all'])) }}</td>
+                                <td style="padding: 3px 6px;">๑๐๐.๐%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -312,7 +313,7 @@
                 <!-- ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดี -->
                 @if($detailedCases->count() > 0)
                 <div class="mt-3 avoid-break">
-                    <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดีในรอบปีงบประมาณ ({{ $detailedCases->count() }} เรื่อง)</p>
+                    <p style="font-weight: bold; font-size: 14pt; margin-bottom: 2px;">ตารางที่ ๒ บัญชีรายละเอียดสำนวนคดีในรอบปีงบประมาณ ({{ thainum($detailedCases->count()) }} เรื่อง)</p>
                     <table class="data-table text-left" style="font-size: 13pt;">
                         <thead>
                             <tr style="background-color: #f1f5f9; font-weight: bold; text-align: center;">
@@ -327,8 +328,8 @@
                         <tbody>
                             @foreach($detailedCases as $idx => $case)
                                 <tr>
-                                    <td style="text-align: center; padding: 3px;">{{ $idx + 1 }}</td>
-                                    <td style="font-weight: bold; white-space: nowrap; padding: 3px;">{{ $case->case_number }}</td>
+                                    <td style="text-align: center; padding: 3px;">{{ thainum($idx + 1) }}</td>
+                                    <td style="font-weight: bold; white-space: nowrap; padding: 3px;">{{ thainum($case->case_number) }}</td>
                                     <td style="padding: 3px;">{{ $case->subject }}</td>
                                     <td style="padding: 3px;">{{ law_type($case->law_type) }}</td>
                                     <td style="white-space: nowrap; padding: 3px;">{{ thaidate($case->created_at, 'short') }}</td>

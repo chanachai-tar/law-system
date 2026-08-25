@@ -26,13 +26,29 @@ if (!function_exists('thaidate')) {
             12 => 'ธ.ค.'
         ];
 
+        // ชื่อเดือนเต็ม (สำหรับหนังสือราชการ)
+        $fullMonths = [
+            1 => 'มกราคม',
+            2 => 'กุมภาพันธ์',
+            3 => 'มีนาคม',
+            4 => 'เมษายน',
+            5 => 'พฤษภาคม',
+            6 => 'มิถุนายน',
+            7 => 'กรกฎาคม',
+            8 => 'สิงหาคม',
+            9 => 'กันยายน',
+            10 => 'ตุลาคม',
+            11 => 'พฤศจิกายน',
+            12 => 'ธันวาคม'
+        ];
+
         try {
             // 3. แปลงวันที่ และบังคับ Timezone เป็นไทย (Asia/Bangkok) เสมอ
-            // ใช้ \Carbon\Carbon เพื่อให้เรียกใช้ได้ทุกที่โดยไม่ต้อง use ด้านบน
             $dateObj = \Carbon\Carbon::parse($date)->setTimezone('Asia/Bangkok');
 
             $day = $dateObj->format('j');           // วันที่ (ไม่มีเลข 0 นำหน้า)
-            $month = $months[(int)$dateObj->format('n')]; // ดึงชื่อเดือนจาก Array
+            $month = $months[(int)$dateObj->format('n')]; // ดึงชื่อเดือนย่อจาก Array
+            $fullMonth = $fullMonths[(int)$dateObj->format('n')]; // ดึงชื่อเดือนเต็ม
             $year = $dateObj->year + 543;           // แปลงเป็น พ.ศ.
             $time = $dateObj->format('H:i');        // เวลาแบบ 24 ชั่วโมง
 
@@ -40,6 +56,16 @@ if (!function_exists('thaidate')) {
             if ($format === 'short') {
                 // แบบย่อ: 17 ก.พ. 2569
                 return "$day $month $year";
+            }
+
+            if ($format === 'official') {
+                // แบบหนังสือราชการ: 25 สิงหาคม 2569
+                return "$day $fullMonth $year";
+            }
+
+            if ($format === 'thai_official') {
+                // แบบหนังสือราชการเลขไทย: ๒๕ สิงหาคม ๒๕๖๙
+                return thainum($day) . " $fullMonth " . thainum($year);
             }
 
             // แบบเต็ม (ค่าเริ่มต้น): 17 ก.พ. 2569 เวลา 09:56 น.
@@ -64,8 +90,6 @@ if (!function_exists('law_type')) {
     function law_type($type)
     {
         $types = [
-
-            // รองรับแบบตัวเลข (เผื่อเก็บในฐานข้อมูลเป็น ID)
             1 => 'ตรวจสอบข้อเท็จจริง (ตส.)',
             2 => 'สอบสวนความรับผิดทางละเมิด (สล.)',
             3 => 'สอบสวนวินัย (สว.)'
