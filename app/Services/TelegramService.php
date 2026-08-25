@@ -34,7 +34,7 @@ class TelegramService
     /**
      * Send a raw text message to Telegram Bot / Group
      */
-    public static function sendMessage(string $message, ?string $chatId = null, ?string $customBotToken = null): array
+    public static function sendMessage(string $message, ?string $chatId = null, ?string $customBotToken = null, ?array $replyMarkup = null): array
     {
         $botToken = $customBotToken ?: self::getBotToken();
         $targetChatId = $chatId ?: self::getChatId();
@@ -49,14 +49,20 @@ class TelegramService
 
         try {
             $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+            $payload = [
+                'chat_id'                  => $targetChatId,
+                'text'                     => $message,
+                'parse_mode'               => 'HTML',
+                'disable_web_page_preview' => true,
+            ];
+
+            if (!empty($replyMarkup)) {
+                $payload['reply_markup'] = $replyMarkup;
+            }
+
             $response = Http::withOptions(['verify' => false])
                 ->timeout(6)
-                ->post($url, [
-                    'chat_id'                  => $targetChatId,
-                    'text'                     => $message,
-                    'parse_mode'               => 'HTML',
-                    'disable_web_page_preview' => true,
-                ]);
+                ->post($url, $payload);
 
             if ($response->successful()) {
                 return ['success' => true, 'message' => 'ส่งข้อความแจ้งเตือนเข้า Telegram สำเร็จ!'];
