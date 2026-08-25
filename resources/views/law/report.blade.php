@@ -361,18 +361,12 @@
             </div>
 
             <!-- 4. ส่วนลงนาม (จัดวางเยื้องขวา กึ่งกลางตามแบบหนังสือราชการ) -->
-            <div class="avoid-break" style="padding-top: 18px; margin-bottom: 12px;">
+            <div class="avoid-break" style="padding-top: 20px; margin-bottom: 14px;">
                 <table style="width: 100%; border: none !important; border-collapse: collapse;">
                     <tr style="border: none !important;">
-                        <!-- QR Code มุมล่างซ้าย (ถ้ามี) -->
-                        <td style="width: 45%; border: none !important; padding: 0; vertical-align: bottom;">
-                            <div style="display: inline-block; text-align: center; font-size: 11pt;">
-                                <img src="{{ $qrDataUri }}" alt="QR Code" style="height: 65px; width: 65px; object-fit: contain; margin: 0 auto;">
-                                <span style="display: block; margin-top: 2px;">กลุ่มงานกฎหมาย สคร.๑๐</span>
-                            </div>
-                        </td>
+                        <td style="width: 40%; border: none !important; padding: 0;"></td>
                         <!-- ลายมือชื่อนิติกรผู้จัดทำรายงาน -->
-                        <td style="width: 55%; border: none !important; padding: 0; text-align: center; vertical-align: top;">
+                        <td style="width: 60%; border: none !important; padding: 0; text-align: center; vertical-align: top;">
                             <div style="display: inline-block; text-align: center; font-size: 16pt; line-height: 1.25;">
                                 <p style="margin-bottom: 2px;">(ลงชื่อ)................................................................</p>
                                 <p style="margin-bottom: 2px;">( {{ Auth::user()->name ?? '................................................................' }} )</p>
