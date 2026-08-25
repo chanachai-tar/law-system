@@ -38,9 +38,17 @@ return [
     // SSO ODPC IDP
     'oidc' => [
         'base_url'      => env('OIDC_BASE_URL', 'https://api.idp.akaratmakebugs.store'),
-        'client_id'     => env('OIDC_CLIENT_ID', '945b5038-0466-49fc-ba12-a77a400d34ca'),
-        'client_secret' => env('OIDC_CLIENT_SECRET', '8a5cf948cab445858565a1572f7e70de7a9df4e1d5f18bdf7f271a877a448bd6'),
+        'client_id'     => env('OIDC_CLIENT_ID'),
+        'client_secret' => env('OIDC_CLIENT_SECRET'),
         'redirect'      => env('OIDC_REDIRECT_URI', env('APP_URL', 'http://127.0.0.1:8000') . '/auth/oidc/callback'),
+    ],
+
+    // Telegram
+    'telegram' => [
+        'bot_token'     => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id'       => env('TELEGRAM_CHAT_ID'),
+        'git_bot_token' => env('GIT_TELEGRAM_BOT_TOKEN'),
+        'git_chat_id'   => env('GIT_TELEGRAM_CHAT_ID'),
     ],
 
 ];
