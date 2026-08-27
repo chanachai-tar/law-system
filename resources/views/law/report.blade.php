@@ -13,218 +13,255 @@
 @endphp
 
 @section('header_title')
-    <i class="ri-file-paper-2-line text-indigo-600 text-lg" aria-hidden="true"></i>
-    <span>แบบบันทึกข้อความรายงานสรุปผลงานนิติกร</span>
+    <i class="ri-bar-chart-box-line text-indigo-600 text-lg" aria-hidden="true"></i>
+    <span>รายงานสรุปภาพรวม ปีงบประมาณ พ.ศ. {{ $thaiYear }}</span>
 @endsection
 
 @section('content')
-<style>
-    /* 1. โหลดฟอนต์มาตรฐานราชการ TH Sarabun New แท้ 100% */
-    @font-face {
-        font-family: 'TH Sarabun New';
-        src: url('{{ asset('fonts/THSarabunNew.ttf') }}') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-    }
-    @font-face {
-        font-family: 'TH Sarabun New';
-        src: url('{{ asset('fonts/THSarabunNew-Bold.ttf') }}') format('truetype');
-        font-weight: bold;
-        font-style: normal;
-        font-display: swap;
-    }
-    @font-face {
-        font-family: 'TH Sarabun PSK';
-        src: url('{{ asset('fonts/THSarabunNew.ttf') }}') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-    }
-    @font-face {
-        font-family: 'TH Sarabun PSK';
-        src: url('{{ asset('fonts/THSarabunNew-Bold.ttf') }}') format('truetype');
-        font-weight: bold;
-        font-style: normal;
-        font-display: swap;
-    }
+<div class="max-w-7xl mx-auto space-y-6">
 
-    /* 2. บังคับใช้ฟอนต์ TH Sarabun New ตามระเบียบสำนักนายกรัฐมนตรีฯ */
-    .thai-gov-memo,
-    .thai-gov-memo * {
-        font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif !important;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        box-sizing: border-box;
-    }
-
-    .thai-gov-memo {
-        font-size: 16pt !important;
-        line-height: 1.2 !important;
-        color: #000000 !important;
-    }
-
-    .thai-gov-memo h1 {
-        font-size: 29pt !important;
-        font-weight: bold !important;
-        line-height: 1 !important;
-        margin: 0;
-        padding: 0;
-    }
-
-    .thai-gov-memo p {
-        font-size: 16pt !important;
-        line-height: 1.2 !important;
-        margin-top: 0;
-        margin-bottom: 0.35rem;
-    }
-
-    .thai-gov-memo table.data-table {
-        font-size: 14pt !important;
-        border-collapse: collapse !important;
-        width: 100% !important;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .thai-gov-memo table.data-table th,
-    .thai-gov-memo table.data-table td {
-        font-size: 14pt !important;
-        padding: 4px 6px !important;
-        border: 1px solid #000000 !important;
-        color: #000000 !important;
-        line-height: 1.15 !important;
-    }
-
-    /* มาตรฐานขอบกระดาษราชการไทย: บน 2.5cm, ล่าง 2.0cm, ซ้าย 3.0cm (เจาะแฟ้ม), ขวา 2.0cm */
-    @page {
-        size: A4 portrait;
-        margin-top: 25mm !important;
-        margin-bottom: 20mm !important;
-        margin-left: 30mm !important;
-        margin-right: 20mm !important;
-    }
-
-    @media print {
-        *, html, body {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-        nav, aside, header, footer, #sidebar, .no-print, button, .navbar, .sidebar-wrapper, #socket-status-badge {
-            display: none !important;
-            visibility: hidden !important;
-            width: 0 !important;
-            height: 0 !important;
-        }
-        html, body {
-            background-color: #ffffff !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: visible !important;
-            color: #000000 !important;
-            font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif !important;
-            font-size: 16pt !important;
-            line-height: 1.15 !important;
-        }
-        .main-content-wrapper, .flex-1 {
-            margin-left: 0 !important;
-            padding: 0 !important;
-            background-color: #ffffff !important;
-        }
-        #memo-document {
-            display: block !important;
-            visibility: visible !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            background: transparent !important;
-        }
-        .avoid-break {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-        }
-        tr {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-        }
-    }
-
-    /* ระยะขอบแสดงผลบนหน้าจอ A4 Preview เสมือนกระดาษจริง */
-    .memo-page-preview {
-        padding-top: 25mm;
-        padding-bottom: 20mm;
-        padding-left: 30mm;
-        padding-right: 20mm;
-    }
-    @media (max-width: 640px) {
-        .memo-page-preview {
-            padding: 1.25rem 0.75rem !important;
-        }
-    }
-</style>
-
-<div class="max-w-5xl mx-auto space-y-5">
-
-    <!-- Top Action Toolbar (Screen View Only) -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/80 shadow-sm">
-        <div class="space-y-1">
-            <div class="flex items-center gap-2">
-                <span class="px-3 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                    แบบบันทึกข้อความราชการ (มาตรฐานกรมควบคุมโรค)
-                </span>
-                <span class="text-xs text-slate-500 font-medium">ปีงบประมาณ พ.ศ. {{ $thaiYear }}</span>
-            </div>
-            <h2 class="text-base sm:text-lg font-black text-slate-800 tracking-tight">
-                รายงานสรุปผลการดำเนินงานสำนวนคดีและข้อกฎหมาย
+    <!-- Header & Filter -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
+        <div>
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">
+                รายงานสถิติสำนวนคดีและข้อกฎหมาย
             </h2>
-            <p class="text-xs text-slate-500">
-                แบบบันทึกข้อความมาตรฐานระเบียบสารบรรณ • ฟอนต์ TH Sarabun New 16pt (หัวข้อ 29pt)
-            </p>
+            <p class="text-sm text-slate-500 mt-1">สรุปข้อมูลสถิติการดำเนินงานและสถานะสำนวนทั้งหมดในปีงบประมาณที่เลือก</p>
         </div>
-
-        <div class="flex flex-wrap items-center gap-2.5 flex-shrink-0">
-            <!-- Year Selector Form -->
+        
+        <div class="flex items-center gap-3">
             <form method="GET" action="{{ route('reports.index') }}" class="flex items-center m-0">
-                <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-2xl border border-slate-200/80 pl-3 pr-7 py-2 transition-all">
-                    <label for="report_fiscal_year" class="text-xs font-bold text-slate-700 mr-1.5 whitespace-nowrap cursor-pointer select-none">
-                        ปี:
+                <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-2xl border border-slate-200/80 pl-3 pr-8 py-2.5 transition-all">
+                    <label for="report_fiscal_year" class="text-sm font-bold text-slate-700 mr-2 whitespace-nowrap cursor-pointer">
+                        ปีงบประมาณ:
                     </label>
-                    <select name="fiscal_year" id="report_fiscal_year" onchange="this.form.submit()" aria-label="เลือกปีรายงาน"
-                        style="border-radius: 1rem !important; -webkit-appearance: none !important; appearance: none !important; background-color: transparent !important; border: none !important;"
-                        class="bg-transparent border-0 p-0 text-xs font-extrabold text-indigo-700 outline-none focus:ring-0 cursor-pointer appearance-none">
+                    <select name="fiscal_year" id="report_fiscal_year" onchange="this.form.submit()"
+                        class="bg-transparent border-0 p-0 text-sm font-extrabold text-indigo-700 outline-none focus:ring-0 cursor-pointer appearance-none">
                         @foreach($years as $yr)
-                            <option value="{{ $yr }}" class="bg-white text-slate-800 font-semibold" {{ ($selectedYear == $yr || $selectedYear == ($yr - 543)) ? 'selected' : '' }}>
+                            <option value="{{ $yr }}" class="bg-white text-slate-800" {{ ($selectedYear == $yr || $selectedYear == ($yr - 543)) ? 'selected' : '' }}>
                                 พ.ศ. {{ $yr }}
                             </option>
                         @endforeach
                     </select>
-                    <i class="ri-arrow-down-s-line absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none" aria-hidden="true"></i>
+                    <i class="ri-arrow-down-s-line absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-base pointer-events-none" aria-hidden="true"></i>
                 </div>
             </form>
-
-            <!-- Export to Word (.doc) Button -->
-            <button type="button" onclick="exportToWord()"
-                class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white rounded-2xl text-xs font-bold shadow-sm shadow-sky-600/20 transition active:scale-95 whitespace-nowrap"
-                title="ส่งออกเอกสารแบบบันทึกข้อความเพื่อนำไปแก้ไขต่อใน Microsoft Word">
-                <i class="ri-file-word-2-line text-base" aria-hidden="true"></i>
-                <span>บันทึกเป็น Word (.doc)</span>
+            
+            <button type="button" onclick="exportToWord()" class="px-4 py-2.5 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white rounded-2xl text-sm font-bold shadow-sm transition active:scale-95 flex items-center gap-2">
+                <i class="ri-file-word-2-line"></i> โหลด Word (.doc)
             </button>
 
-            <!-- Print / Save PDF Button -->
-            <button type="button" onclick="window.print()"
-                class="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-bold shadow-sm shadow-indigo-600/20 transition active:scale-95 whitespace-nowrap"
-                title="สั่งพิมพ์หรือบันทึกเป็นไฟล์ PDF ขนาดกระดาษ A4">
-                <i class="ri-file-pdf-2-line text-base" aria-hidden="true"></i>
-                <span>พิมพ์ / บันทึกเป็น PDF</span>
+            <button type="button" onclick="window.print()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-sm font-bold shadow-sm transition active:scale-95 flex items-center gap-2">
+                <i class="ri-printer-line"></i> สั่งพิมพ์
             </button>
         </div>
     </div>
 
-    <!-- Official Thai Government Memorandum Document (แบบบันทึกข้อความ กรมควบคุมโรค) -->
-    <div id="memo-document" class="thai-gov-memo bg-white memo-page-preview rounded-3xl shadow-md border border-slate-200 text-black mx-auto max-w-4xl space-y-3 leading-relaxed">
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Card 1 -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i class="ri-folder-2-line text-xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-600 text-sm">สำนวนทั้งหมด</h3>
+            </div>
+            <div>
+                <div class="text-3xl font-black text-slate-800">{{ number_format($statusStats['all']) }}</div>
+                <p class="text-xs text-slate-500 mt-1">เรื่องที่รับเข้าระบบ</p>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+                    <i class="ri-time-line text-xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-600 text-sm">อยู่ระหว่างดำเนินการ</h3>
+            </div>
+            <div>
+                <div class="text-3xl font-black text-slate-800">{{ number_format($statusStats['pending']) }}</div>
+                <p class="text-xs text-slate-500 mt-1">เรื่องที่กำลังพิจารณา</p>
+            </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i class="ri-checkbox-circle-line text-xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-600 text-sm">ดำเนินการแล้วเสร็จ</h3>
+            </div>
+            <div>
+                <div class="text-3xl font-black text-slate-800">{{ number_format($statusStats['completed']) }}</div>
+                <p class="text-xs text-slate-500 mt-1">เรื่องที่ปิดสำนวนแล้ว</p>
+            </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+                    <i class="ri-money-dollar-circle-line text-xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-600 text-sm">มูลค่าความเสียหายรวม</h3>
+            </div>
+            <div>
+                <div class="text-3xl font-black text-slate-800">{{ number_format($statusStats['total_damage'] ?? 0, 2) }}</div>
+                <p class="text-xs text-slate-500 mt-1">บาท (ถ้ามีการบันทึก)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- สถิติแยกตามประเภท -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                <h3 class="font-bold text-slate-800">สถิติแยกตามประเภทสำนวน</h3>
+            </div>
+            <div class="p-5 flex-1">
+                <div class="space-y-4">
+                    @foreach($typeStats as $name => $count)
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-600">{{ $name }}</span>
+                        <span class="text-sm font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">{{ number_format($count) }}</span>
+                    </div>
+                    @if(!$loop->last) <div class="h-px bg-slate-100"></div> @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        <!-- กราฟ/ตารางรายเดือน (สามารถขยายเป็น Chart.js ได้ในอนาคต) -->
+        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                <h3 class="font-bold text-slate-800">ข้อมูลการดำเนินงานรายเดือน (เดือนที่มีการสร้างสำนวน)</h3>
+            </div>
+            <div class="p-0 flex-1 overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-5 py-3 font-bold border-b border-slate-200">เดือน</th>
+                            <th class="px-5 py-3 font-bold border-b border-slate-200 text-center">รับเข้าระบบ (ใหม่)</th>
+                            <th class="px-5 py-3 font-bold border-b border-slate-200 text-center text-amber-600">กำลังดำเนินการ</th>
+                            <th class="px-5 py-3 font-bold border-b border-slate-200 text-center text-emerald-600">แล้วเสร็จ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @php
+                            $thaiMonths = [
+                                1=>'มกราคม', 2=>'กุมภาพันธ์', 3=>'มีนาคม', 4=>'เมษายน', 5=>'พฤษภาคม', 6=>'มิถุนายน',
+                                7=>'กรกฎาคม', 8=>'สิงหาคม', 9=>'กันยายน', 10=>'ตุลาคม', 11=>'พฤศจิกายน', 12=>'ธันวาคม'
+                            ];
+                        @endphp
+                        @forelse($monthlyData as $data)
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-5 py-3 font-bold text-slate-700">{{ $thaiMonths[$data->month] ?? 'เดือน '.$data->month }}</td>
+                            <td class="px-5 py-3 text-center font-semibold text-slate-700">{{ $data->processing + $data->completed }}</td>
+                            <td class="px-5 py-3 text-center font-bold text-amber-600">{{ $data->processing }}</td>
+                            <td class="px-5 py-3 text-center font-bold text-emerald-600">{{ $data->completed }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-5 py-8 text-center text-slate-500 text-sm">ไม่มีข้อมูลในปฏิทินของปีนี้</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ตารางรายละเอียดสำนวน -->
+    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 class="font-bold text-slate-800">รายละเอียดสำนวนคดีในรอบปี</h3>
+            <span class="text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full">ทั้งหมด {{ count($detailedCases) }} รายการ</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm min-w-[800px]">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                        <th class="px-5 py-3 font-bold border-b border-slate-200">เลขที่สำนวน / วันที่รับเรื่อง</th>
+                        <th class="px-5 py-3 font-bold border-b border-slate-200">เรื่อง / ผู้ถูกกล่าวหา</th>
+                        <th class="px-5 py-3 font-bold border-b border-slate-200">ประเภท</th>
+                        <th class="px-5 py-3 font-bold border-b border-slate-200">สถานะล่าสุด</th>
+                        <th class="px-5 py-3 font-bold border-b border-slate-200">ผู้รับผิดชอบ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($detailedCases as $case)
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-5 py-4">
+                            <div class="font-bold text-slate-800">{{ $case->case_number ?? 'รอดำเนินการ' }}</div>
+                            <div class="text-xs text-slate-500 mt-1">{{ \Carbon\Carbon::parse($case->created_at)->addYears(543)->format('d M y') }}</div>
+                        </td>
+                        <td class="px-5 py-4">
+                            <div class="font-medium text-slate-700 line-clamp-1">{{ $case->subject }}</div>
+                            <div class="text-xs text-slate-500 mt-1 line-clamp-1">ถึง: {{ $case->to ?? '-' }}</div>
+                        </td>
+                        <td class="px-5 py-4">
+                            @if($case->law_type == 1)
+                                <span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md">ตส.</span>
+                            @elseif($case->law_type == 2)
+                                <span class="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-md">สล.</span>
+                            @else
+                                <span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-md">สว.</span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-4">
+                            @if($case->status == 'completed')
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">
+                                    <i class="ri-checkbox-circle-fill"></i> เสร็จสิ้น
+                                </div>
+                            @else
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold">
+                                    <i class="ri-time-fill"></i> อยู่ระหว่างดำเนินการ
+                                </div>
+                            @endif
+                        </td>
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold">
+                                    {{ mb_substr($case->user->name ?? '?', 0, 1) }}
+                                </div>
+                                <span class="text-sm font-medium text-slate-600">{{ $case->user->name ?? '-' }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-5 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center text-slate-400">
+                                <i class="ri-folder-open-line text-4xl mb-2"></i>
+                                <p class="text-sm font-medium">ยังไม่มีข้อมูลสำนวนในปีงบประมาณนี้</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    body { background-color: #fff !important; }
+    .no-print { display: none !important; }
+    .shadow-sm { box-shadow: none !important; }
+    .border { border-color: #e2e8f0 !important; }
+    .bg-slate-50 { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; }
+    .bg-indigo-50 { background-color: #eef2ff !important; -webkit-print-color-adjust: exact; }
+    .bg-amber-50 { background-color: #fffbeb !important; -webkit-print-color-adjust: exact; }
+    .bg-emerald-50 { background-color: #ecfdf5 !important; -webkit-print-color-adjust: exact; }
+}
+</style>
+@endsection
+
+
+<div style="display:none;">
+<div id="memo-document" class="thai-gov-memo bg-white memo-page-preview rounded-3xl shadow-md border border-slate-200 text-black mx-auto max-w-4xl space-y-3 leading-relaxed">
 
         <!-- 1. ตราครุฑ และ คำว่า "บันทึกข้อความ" (กึ่งกลางหน้ากระดาษ ตามแบบมาตรฐาน) -->
         <table style="width: 100%; border: none !important; margin: 0 0 10px 0; border-collapse: collapse;">
@@ -233,7 +270,7 @@
                     <img src="{{ $garudaDataUri }}" alt="ตราครุฑ" style="height: 3.0cm; width: auto; display: block;">
                 </td>
                 <td style="text-align: center; vertical-align: middle; border: none !important; padding-right: 3.5cm;">
-                    <h1 style="font-family: 'TH Sarabun New', 'TH Sarabun PSK', sans-serif; font-size: 29pt; font-weight: bold; line-height: 1; margin: 0; padding: 0;">
+                    <h1 style="font-family: 'TH SarabunIT๙', sans-serif; font-size: 29pt; font-weight: bold; line-height: 1; margin: 0; padding: 0;">
                         บันทึกข้อความ
                     </h1>
                 </td>
@@ -427,13 +464,14 @@
     </div>
 
 </div>
-@endsection
+</div>
+
 
 @push('scripts')
 <script>
     /**
      * ส่งออกเอกสารแบบบันทึกข้อความราชการเป็นไฟล์ Microsoft Word (.doc)
-     * บังคับใช้ฟอนต์มาตรฐานราชการ TH Sarabun PSK / TH Sarabun New 16pt (หัวข้อ 29pt)
+     * บังคับใช้ฟอนต์มาตรฐานราชการ TH SarabunIT๙ 16pt (หัวข้อ 29pt)
      * ระยะขอบมาตรฐาน: ซ้าย 3.0cm, ขวา 2.0cm, บน 2.5cm, ล่าง 2.0cm
      */
     function exportToWord() {
@@ -445,7 +483,7 @@
 
         const clone = memoElement.cloneNode(true);
 
-        // Pre-header for Microsoft Word formatting with native Thai Sarabun font-face
+        // Pre-header for Microsoft Word formatting with native TH SarabunIT๙ font-face
         const preHtml = `
             <html xmlns:v="urn:schemas-microsoft-com:vml"
                   xmlns:o="urn:schemas-microsoft-com:office:office" 
@@ -466,7 +504,7 @@
                 <![endif]-->
                 <style>
                     @font-face {
-                        font-family: "TH Sarabun PSK";
+                        font-family: "TH SarabunIT๙";
                         panose-1: 2 11 5 0 4 2 0 2 0 4;
                         mso-font-charset: 222;
                         mso-generic-font-family: swiss;
@@ -474,7 +512,7 @@
                         mso-font-signature: 16777219 0 0 0 65536 0;
                     }
                     @font-face {
-                        font-family: "TH Sarabun New";
+                        font-family: "TH SarabunIT๙";
                         panose-1: 2 11 5 0 4 2 0 2 0 4;
                         mso-font-charset: 222;
                         mso-generic-font-family: swiss;
@@ -493,13 +531,13 @@
                         page: Section1; 
                     }
 
-                    /* บังคับใช้ฟอนต์ TH Sarabun ทุกจุด */
+                    /* บังคับใช้ฟอนต์ TH SarabunIT๙ ทุกจุด */
                     *, body, div, p, span, table, th, td, h1, h2, h3, a, b, strong, i, em {
-                        font-family: "TH Sarabun PSK", "TH Sarabun New", sans-serif !important;
-                        mso-ascii-font-family: "TH Sarabun PSK" !important;
-                        mso-hansi-font-family: "TH Sarabun PSK" !important;
-                        mso-bidi-font-family: "TH Sarabun PSK" !important;
-                        mso-fareast-font-family: "TH Sarabun PSK" !important;
+                        font-family: "TH SarabunIT๙", sans-serif !important;
+                        mso-ascii-font-family: "TH SarabunIT๙" !important;
+                        mso-hansi-font-family: "TH SarabunIT๙" !important;
+                        mso-bidi-font-family: "TH SarabunIT๙" !important;
+                        mso-fareast-font-family: "TH SarabunIT๙" !important;
                     }
 
                     body {

@@ -56,8 +56,6 @@
             <div class="relative z-10">
                 <!-- Logos Badge -->
                 <div class="inline-flex items-center justify-center gap-3.5 px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 mb-3.5 shadow-inner">
-                    <img src="{{ asset('images/ddc_logo.svg') }}" alt="ตรากรมควบคุมโรค" class="h-9 w-auto object-contain drop-shadow">
-                    <div class="h-6 w-px bg-white/20"></div>
                     <img src="{{ asset('images/odpc10.png') }}" alt="ตรา สคร.10 อุบลราชธานี" class="h-9 w-auto object-contain drop-shadow">
                     <div class="h-6 w-px bg-white/20"></div>
                     <img src="{{ asset('images/lss_logo_rounded.png') }}" alt="โลโก้ ODPC10-LSS" class="h-9 w-9 object-contain drop-shadow">

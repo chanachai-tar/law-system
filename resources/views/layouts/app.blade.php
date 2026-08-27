@@ -262,11 +262,7 @@
                         <span class="hidden sm:inline">แจ้งเตือน Telegram</span>
                     </button>
 
-                    <!-- Socket Live Status Badge -->
-                    <div id="socket-status-badge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 transition-all" title="ระบบเชื่อมต่อ Real-time WebSocket">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
-                        <span id="socket-status-text">Live Sync</span>
-                    </div>
+
 
                     <!-- Date badge -->
                     <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
@@ -457,8 +453,7 @@
 
             <div>
                 <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-50 text-sky-800 rounded-full border border-sky-200 text-xs font-extrabold mb-2 shadow-xs">
-                    <i class="ri-group-line text-sky-600" aria-hidden="true"></i>
-                    <span>กลุ่ม: ODPC10-LSS</span>
+                    <span>ODPC10-LSS</span>
                 </div>
                 <h3 class="text-base font-extrabold text-slate-800 tracking-tight">
                     รับการแจ้งเตือนสำนวนกฎหมาย

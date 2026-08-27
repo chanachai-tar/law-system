@@ -27,12 +27,42 @@ class LegalCaseController extends Controller
             $orderQuery->whereYear('order_date', $adYear);
         }
 
-        $allCount = (clone $caseQuery)->count();
-        $completedCount = (clone $caseQuery)->where('status', 'completed')->count();
-        $pendingCount = (clone $caseQuery)->where(function($q) {
-            $q->where('status', '!=', 'completed')->orWhereNull('status');
-        })->count();
-        $ordersCount = (clone $orderQuery)->count();
+        // Data Pre-aggregation & Delta Processing (Hybrid)
+        // 1. ดึงข้อมูล Base (สรุปยอดเมื่อคืน/ล่าสุด)
+        $summary = \App\Models\DashboardSummary::where('summary_date', today()->format('Y-m-d'))->first();
+        
+        // ถ้ายังไม่มี Summary ของวันนี้ (เช่น cron ยังไม่รัน) ให้รันสดุเพื่อสร้าง Base ก่อน
+        if (!$summary) {
+            \Illuminate\Support\Facades\Artisan::call('dashboard:calculate-summary');
+            $summary = \App\Models\DashboardSummary::where('summary_date', today()->format('Y-m-d'))->first();
+        }
+
+        $cutoff = $summary->updated_at;
+
+        // 2. หากมีการ Filter ปีงบประมาณ จะไม่ใช้ Hybrid (เพราะเป็น Query เฉพาะกิจ)
+        if ($selectedYear && is_numeric($selectedYear)) {
+            $allCount = (clone $caseQuery)->count();
+            $completedCount = (clone $caseQuery)->where('status', 'completed')->count();
+            $pendingCount = (clone $caseQuery)->where(function($q) {
+                $q->where('status', '!=', 'completed')->orWhereNull('status');
+            })->count();
+            $ordersCount = (clone $orderQuery)->count();
+        } else {
+            // 3. ใช้เทคนิค Delta Processing (Base + ส่วนต่างของวันนี้) เพื่อลดโหลด Database
+            // จำนวนรวม = ยอดสรุปตอนตี 3 + ยอดที่เพิ่งสร้างหลังตี 3
+            $newCasesCount = (clone $caseQuery)->where('created_at', '>', $cutoff)->count();
+            $allCount = $summary->all_count + $newCasesCount;
+
+            $newOrdersCount = (clone $orderQuery)->where('created_at', '>', $cutoff)->count();
+            $ordersCount = $summary->orders_count + $newOrdersCount;
+
+            // สำหรับ Status (Completed/Pending) ถ้าจะให้แม่นยำ 100% กรณีมีการเปลี่ยนสถานะไปมา 
+            // สามารถหา Delta จาก updated_at หรือจะ Query สดเฉพาะสถานะก็ได้ (ในที่นี้ Query สดเพื่อความแม่นยำ)
+            $completedCount = (clone $caseQuery)->where('status', 'completed')->count();
+            $pendingCount = (clone $caseQuery)->where(function($q) {
+                $q->where('status', '!=', 'completed')->orWhereNull('status');
+            })->count();
+        }
 
         // สำนวนใกล้ครบกำหนด / เกินกำหนด (Pending)
         $urgentCount = LegalCase::where('status', '!=', 'completed')
@@ -269,13 +299,23 @@ class LegalCaseController extends Controller
 
         $files = $query->paginate(15)->withQueryString();
 
-        // สถิติแยกตามกลุ่มงานกฎหมาย
+        // สถิติแยกตามกลุ่มงานกฎหมาย (Hybrid Aggregation)
+        $summary = \App\Models\DashboardSummary::where('summary_date', today()->format('Y-m-d'))->first();
+        if (!$summary) {
+            \Illuminate\Support\Facades\Artisan::call('dashboard:calculate-summary');
+            $summary = \App\Models\DashboardSummary::where('summary_date', today()->format('Y-m-d'))->first();
+        }
+        $cutoff = $summary->updated_at;
+
+        $newFilesQuery = CaseFile::where('created_at', '>', $cutoff);
+        $newOrdersCount = \App\Models\AppointmentOrder::where('created_at', '>', $cutoff)->count();
+
         $stats = [
-            'all'    => CaseFile::count(),
-            'ts'     => CaseFile::whereHas('step.legalCase', fn($q) => $q->where('law_type', 1))->count(),
-            'sl'     => CaseFile::whereHas('step.legalCase', fn($q) => $q->where('law_type', 2))->count(),
-            'sw'     => CaseFile::whereHas('step.legalCase', fn($q) => $q->where('law_type', 3))->count(),
-            'orders' => \App\Models\AppointmentOrder::count(),
+            'all'    => $summary->all_files_count + (clone $newFilesQuery)->count(),
+            'ts'     => $summary->ts_files_count + (clone $newFilesQuery)->whereHas('step.legalCase', fn($q) => $q->where('law_type', 1))->count(),
+            'sl'     => $summary->sl_files_count + (clone $newFilesQuery)->whereHas('step.legalCase', fn($q) => $q->where('law_type', 2))->count(),
+            'sw'     => $summary->sw_files_count + (clone $newFilesQuery)->whereHas('step.legalCase', fn($q) => $q->where('law_type', 3))->count(),
+            'orders' => $summary->orders_count + $newOrdersCount,
         ];
 
         return view('law.files', compact('files', 'stats'));
