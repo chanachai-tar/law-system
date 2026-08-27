@@ -11,6 +11,21 @@ Write-Host "  ODPC10-LSS Git Auto-Push to GitHub" -ForegroundColor Cyan
 Write-Host "  Repository: https://github.com/chanachai-tar/law-system" -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
+# 0. สำรองข้อมูลฐานข้อมูล (เฉพาะโครงสร้างตาราง - Schema Only)
+Write-Host "`n[1/4] Exporting Database Schema (No Data)..." -ForegroundColor Yellow
+$dbName = "law_system_db"
+$dbUser = "root"
+$dbPass = "0000"
+$dumpFile = "$PSScriptRoot\database\database_schema.sql"
+
+try {
+    # ใช้ flag --no-data (-d) เพื่อดึงมาเฉพาะโครงสร้างตาราง ป้องกันข้อมูลจริงหลุด
+    cmd.exe /c "mysqldump -u$dbUser -p$dbPass --no-data $dbName > ""$dumpFile"""
+    Write-Host "[INFO] Database schema dumped to database/database_schema.sql" -ForegroundColor Green
+} catch {
+    Write-Host "[WARN] Failed to dump database schema. Ensure MySQL is running." -ForegroundColor Red
+}
+
 # 1. ตรวจสอบการเปลี่ยนแปลงไฟล์ในระบบ
 $status = git status --porcelain
 if (-not $status) {
@@ -87,13 +102,13 @@ if (-not $Message) {
 Write-Host "`n[Auto-Version] v$currentVer" -ForegroundColor Green
 Write-Host "[Auto-Detected] $Message" -ForegroundColor Cyan
 
-Write-Host "`n[1/3] Git Add..." -ForegroundColor Yellow
+Write-Host "`n[2/4] Git Add..." -ForegroundColor Yellow
 git add .
 
-Write-Host "[2/3] Git Commit..." -ForegroundColor Yellow
+Write-Host "[3/4] Git Commit..." -ForegroundColor Yellow
 git commit -m "[$currentVer] $Message"
 
-Write-Host "[3/3] Git Push to GitHub..." -ForegroundColor Yellow
+Write-Host "[4/4] Git Push to GitHub..." -ForegroundColor Yellow
 git push origin main
 
 if ($LASTEXITCODE -eq 0) {

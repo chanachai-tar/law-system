@@ -254,15 +254,6 @@
 
                 <!-- Right: Quick Info & User Profile -->
                 <div class="flex items-center gap-3 sm:gap-4">
-                    <!-- Telegram Notification Button in Topbar -->
-                    <button type="button" onclick="openTelegramModal()"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition active:scale-95 shadow-xs"
-                        title="รับการแจ้งเตือนสำนวนผ่าน Telegram">
-                        <i class="ri-telegram-fill text-sky-500 text-sm" aria-hidden="true"></i>
-                        <span class="hidden sm:inline">แจ้งเตือน Telegram</span>
-                    </button>
-
-
 
                     <!-- Date badge -->
                     <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
@@ -459,13 +450,13 @@
                     รับการแจ้งเตือนสำนวนกฎหมาย
                 </h3>
                 <p class="text-[11px] text-slate-500 mt-0.5">
-                    กลุ่มเฉพาะระบบงานสำนวน สคร.10 (แยกอิสระจากระบบอื่น)
+                    กลุ่มเฉพาะระบบงานสำนวน สคร.10
                 </p>
             </div>
 
             <!-- QR Code Card -->
             <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/60 inline-block shadow-inner">
-                <img src="{{ asset('images/telegram_qr.png') }}" alt="QR Code รับการแจ้งเตือน Telegram กลุ่ม ODPC10-LSS" class="w-48 h-48 object-contain mx-auto rounded-xl bg-white p-2 shadow-sm">
+                <img src="{{ asset('images/telegram_qr.png') }}" alt="QR Code รับการแจ้งเตือน Telegram ODPC10-LSS" class="w-48 h-48 object-contain mx-auto rounded-xl bg-white p-2 shadow-sm">
             </div>
 
             <!-- Instructions -->
