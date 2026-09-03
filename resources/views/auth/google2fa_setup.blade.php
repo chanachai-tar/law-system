@@ -78,6 +78,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const otpInputs = document.querySelectorAll('.setup-otp-input');
+            setTimeout(() => { if (otpInputs.length > 0) otpInputs[0].focus(); }, 100);
             
             function updateHiddenOtp() {
                 const code = Array.from(otpInputs).map(i => i.value).join('');
