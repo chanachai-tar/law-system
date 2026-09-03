@@ -19,6 +19,22 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/oidc/redirect', [\App\Http\Controllers\Auth\SsoController::class, 'redirect'])->name('sso.login');
 Route::get('/auth/oidc/callback', [\App\Http\Controllers\Auth\SsoController::class, 'callback'])->name('sso.callback');
 
+// OpenID Provider Configuration Endpoint (Mock / Custom)
+Route::get('/.well-known/openid-configuration', function () {
+    return response()->json([
+        'issuer' => url('/'),
+        'authorization_endpoint' => url('/oauth/authorize'),
+        'token_endpoint' => url('/oauth/token'),
+        'userinfo_endpoint' => url('/api/user'),
+        'jwks_uri' => url('/.well-known/jwks.json'),
+        'scopes_supported' => ['openid', 'profile', 'email'],
+        'response_types_supported' => ['code', 'token', 'id_token', 'code token', 'code id_token', 'token id_token', 'code token id_token'],
+        'subject_types_supported' => ['public'],
+        'id_token_signing_alg_values_supported' => ['RS256'],
+        'claims_supported' => ['sub', 'iss', 'aud', 'exp', 'iat', 'name', 'email'],
+    ]);
+});
+
 // 2FA Challenge Routes (Direct TOTP login)
 Route::middleware(['throttle:5,1'])->group(function () {
     Route::get('/auth/2fa/challenge', [\App\Http\Controllers\Auth\Google2faController::class, 'challenge'])->name('google2fa.challenge');

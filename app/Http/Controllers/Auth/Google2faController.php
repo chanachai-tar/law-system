@@ -34,7 +34,7 @@ class Google2faController extends Controller
             $user = User::find($userId);
             if ($user && $user->two_factor_secret) {
                 try {
-                    if ($google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
+                    if ($google2fa->verifyKey($user->two_factor_secret, $request->totp_code, 4)) {
                         session()->forget('2fa:user_id');
                         Auth::login($user);
                         $request->session()->regenerate();
@@ -47,7 +47,7 @@ class Google2faController extends Controller
             $users = User::whereNotNull('two_factor_secret')->where('is_active', 1)->get();
             foreach ($users as $user) {
                 try {
-                    if ($user->two_factor_secret && $google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
+                    if ($user->two_factor_secret && $google2fa->verifyKey($user->two_factor_secret, $request->totp_code, 4)) {
                         Auth::login($user);
                         $request->session()->regenerate();
                         return redirect()->intended('/');
@@ -162,7 +162,8 @@ class Google2faController extends Controller
         }
 
         $google2fa = new Google2FA();
-        $valid = $google2fa->verifyKey($secret, $request->totp_code);
+        // เพิ่ม window เป็น 4 (ยอมรับความคลาดเคลื่อนของเวลาได้ 2 นาที) เผื่อเวลา Server หรือมือถือเดินไม่ตรงกัน
+        $valid = $google2fa->verifyKey($secret, $request->totp_code, 4);
 
         if ($valid) {
             $user->two_factor_secret = $secret;
