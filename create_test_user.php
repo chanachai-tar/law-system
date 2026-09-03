@@ -1,0 +1,1 @@
+﻿<?php require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $app->make("Illuminate\Contracts\Console\Kernel")->bootstrap(); $u = new App\Models\User(); $u->username = "testadmin"; $u->password = Hash::make("0000"); $u->name = "Test Admin"; $u->is_active = 1; $u->role = "admin"; $u->save(); echo "Created testadmin"; 

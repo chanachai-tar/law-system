@@ -26,22 +26,23 @@ class Google2faController extends Controller
             return back()->withErrors(['auth_error' => $validator->errors()->first('totp_code')]);
         }
 
-        $userId = session('2fa:user_id');
-        if (!$userId) {
-            return redirect('/login')->withErrors(['username' => 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่']);
-        }
-
-        $user = User::find($userId);
-        if (!$user) {
-            return redirect('/login')->withErrors(['username' => 'ไม่พบผู้ใช้งาน']);
-        }
-
         $google2fa = new Google2FA();
-        if ($google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
-            session()->forget('2fa:user_id');
-            Auth::login($user);
-            $request->session()->regenerate();
-            return redirect()->intended('/');
+        
+        // Loop through all active users with a 2FA secret
+        $users = User::whereNotNull('two_factor_secret')->where('is_active', 1)->get();
+        
+        foreach ($users as $user) {
+            try {
+                // If the 6-digit code matches this user's secret
+                if ($user->two_factor_secret && $google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
+                    Auth::login($user);
+                    $request->session()->regenerate();
+                    return redirect()->intended('/');
+                }
+            } catch (\Exception $e) {
+                // Ignore decryption errors for individual users and continue checking others
+                continue;
+            }
         }
 
         return back()->withErrors(['auth_error' => 'รหัส 6 หลักไม่ถูกต้อง หรือไม่มีในระบบ']);
@@ -104,7 +105,6 @@ class Google2faController extends Controller
         
         $google2fa = new Google2FA();
         
-        // Generate temporary secret if not in session
         $secret = session('temp_2fa_secret');
         if (!$secret) {
             $secret = $google2fa->generateSecretKey();

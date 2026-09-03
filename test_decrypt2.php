@@ -1,0 +1,1 @@
+﻿<?php require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $app->make("Illuminate\Contracts\Console\Kernel")->bootstrap(); $dec = Crypt::decryptString(App\Models\User::find(1)->getRawOriginal("two_factor_secret")); var_dump($dec);
