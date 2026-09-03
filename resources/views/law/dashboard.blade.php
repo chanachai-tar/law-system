@@ -15,11 +15,6 @@
 
         <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div class="space-y-2">
-                <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-indigo-100 text-xs font-semibold border border-white/15 shadow-sm">
-                    <img src="{{ asset('images/lss_logo_rounded.png') }}" alt="โลโก้ ODPC10-LSS" class="w-4 h-4 object-contain">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
-                    <span>ODPC10 Legal Syllabus System</span>
-                </div>
                 <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
                     ภาพรวมระบบงานสำนวนกฎหมาย
                 </h2>
