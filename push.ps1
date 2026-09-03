@@ -13,6 +13,13 @@ Write-Host "========================================================" -Foregroun
 
 # 0. สำรองข้อมูลฐานข้อมูล (เฉพาะโครงสร้างตาราง - Schema Only)
 Write-Host "`n[1/4] Exporting Database Schema (No Data)..." -ForegroundColor Yellow
+
+if (Test-Path "$PSScriptRoot\.env") {
+    Get-Content "$PSScriptRoot\.env" | Where-Object { $_ -match '^(?!#)([^=]+)=(.*)$' } | ForEach-Object {
+        [Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim())
+    }
+}
+
 $dbName = if ($env:DB_DATABASE) { $env:DB_DATABASE } else { Read-Host "Enter database name" }
 $dbUser = if ($env:DB_USERNAME) { $env:DB_USERNAME } else { Read-Host "Enter database username" }
 $dbPass = if ($env:DB_PASSWORD) { $env:DB_PASSWORD } else { Read-Host "Enter database password" -AsSecureString | ConvertFrom-SecureString -AsPlainText }
