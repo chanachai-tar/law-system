@@ -351,7 +351,7 @@
                                                     @if ($step->files->count() > 0)
                                                         <div class="flex flex-wrap gap-2 pt-1">
                                                             @foreach ($step->files as $file)
-                                                                <a href="{{ asset('storage/' . $file->file_path) }}"
+                                                                <a href="{{ route('files.download', base64_encode($file->file_path)) }}"
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     class="inline-flex items-center gap-2 px-3 py-1.5 bg-white text-rose-600 rounded-xl border border-rose-200/80 text-[11px] font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm">
@@ -374,7 +374,7 @@
                                     <div class="pt-4 border-t border-slate-200/60 flex justify-center">
                                         @if ($case->status != 'completed')
                                             <button type="button"
-                                                onclick="openCloseModal('{{ $case->id }}', '{{ $case->case_number }}')"
+                                                data-id="{{ $case->id }}" data-casenumber="{{ $case->case_number }}" onclick="openCloseModal(this.dataset.id, this.dataset.casenumber)"
                                                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 rounded-xl text-xs font-semibold transition-all shadow-sm active:scale-95">
                                                 <i class="ri-checkbox-circle-line text-base" aria-hidden="true"></i>
                                                 <span>ปิดสำนวนและสิ้นสุดการดำเนินการ</span>

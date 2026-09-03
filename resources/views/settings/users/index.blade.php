@@ -94,7 +94,7 @@
 
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <div class="flex justify-center items-center gap-1.5">
-                                    <button onclick="openEditModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->role }}')" 
+                                    <button data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-role="{{ $user->role }}" data-email="{{ $user->email }}" onclick="openEditModal(this.dataset.id, this.dataset.name, this.dataset.role, this.dataset.email)" 
                                         class="w-8 h-8 flex items-center justify-center text-amber-600 hover:bg-amber-50 rounded-xl border border-amber-100 transition shadow-sm"
                                         aria-label="แก้ไขข้อมูล {{ $user->name }}"
                                         title="แก้ไขข้อมูล">
@@ -151,6 +151,12 @@
                 <label for="username" class="block text-xs font-bold text-slate-700 mb-1">ชื่อผู้ใช้งาน (Username) <span class="text-rose-500">*</span></label>
                 <input type="text" name="username" id="username" 
                     placeholder="เช่น somchai"
+                    class="w-full h-10 px-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-xs transition">
+            </div>
+            <div id="emailDiv" class="mt-4">
+                <label for="userEmail" class="block text-xs font-bold text-slate-700 mb-1">อีเมล (Email) <span class="text-rose-500">*</span></label>
+                <input type="email" name="email" id="userEmail" required 
+                    placeholder="เช่น somchai@odpc10.local"
                     class="w-full h-10 px-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-xs transition">
             </div>
 
@@ -259,15 +265,17 @@
         document.getElementById('passReq').style.display = "none";
         document.getElementById('userName').value = "";
         document.getElementById('username').value = "";
+        if(document.getElementById('userEmail')) document.getElementById('userEmail').value = "";
         document.getElementById('userRole').value = "staff";
         document.getElementById('userModal').classList.replace('hidden', 'flex');
     }
 
-    function openEditModal(id, name, role) {
+    function openEditModal(id, name, role, email) {
         document.getElementById('modalTitle').innerHTML = '<i class="ri-edit-line text-indigo-600"></i> <span>แก้ไขข้อมูลเจ้าหน้าที่</span>';
         document.getElementById('formMethod').value = "PUT";
         document.getElementById('userForm').action = "/setting-user/" + id;
         document.getElementById('userName').value = name;
+        if(document.getElementById('userEmail')) document.getElementById('userEmail').value = email || '';
         document.getElementById('userRole').value = role;
         document.getElementById('usernameDiv').style.display = "none";
         document.getElementById('passReq').style.display = "inline";

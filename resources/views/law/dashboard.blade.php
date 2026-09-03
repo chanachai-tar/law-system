@@ -376,8 +376,8 @@
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        const labels = {!! json_encode($stats['types']->pluck('law_type')) !!};
-        const data = {!! json_encode($stats['types']->pluck('total')) !!};
+        const labels = @json($stats['types']->pluck('law_type'));
+        const data = @json($stats['types']->pluck('total'));
 
         new Chart(ctx, {
             type: 'doughnut',

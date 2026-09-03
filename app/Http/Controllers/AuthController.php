@@ -17,12 +17,23 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'username' => ['required'],
             'password' => ['required'],
-            'is_active' => '1'
+        ], [
+            'username.required' => 'กรุณากรอกชื่อผู้ใช้งาน',
+            'password.required' => 'กรุณากรอกรหัสผ่าน'
         ]);
+        
+        $credentials['is_active'] = 1;
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('cases'); // เข้าได้แล้วไปหน้าสำนวน
+            $user = Auth::user();
+            if ($user->two_factor_secret) {
+                Auth::logout();
+                $request->session()->put('2fa:user_id', $user->id);
+                return redirect()->route('google2fa.challenge');
+            } else {
+                $request->session()->regenerate();
+                return redirect()->route('google2fa.setup', ['username' => $user->username]);
+            }
         }
 
         return back()->withErrors(['username' => 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง']);

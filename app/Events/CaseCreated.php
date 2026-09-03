@@ -3,7 +3,7 @@
 namespace App\Events;
 
 use App\Models\LegalCase;
-use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -27,7 +27,7 @@ class CaseCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('law-system-channel'),
+            new PrivateChannel('law-system-channel'),
         ];
     }
 

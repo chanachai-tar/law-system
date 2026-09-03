@@ -60,8 +60,7 @@ class TelegramService
                 $payload['reply_markup'] = $replyMarkup;
             }
 
-            $response = Http::withOptions(['verify' => false])
-                ->timeout(6)
+            $response = Http::timeout(6)
                 ->post($url, $payload);
 
             if ($response->successful()) {

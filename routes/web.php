@@ -8,17 +8,24 @@ use App\Http\Controllers\SettingUserController;
 use App\Http\Controllers\AppointmentOrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RegulationController;
+use App\Http\Controllers\FileController;
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // SSO Routes (ODPC10 IDP - Single Sign-On)
 Route::get('/auth/oidc/redirect', [\App\Http\Controllers\Auth\SsoController::class, 'redirect'])->name('sso.login');
 Route::get('/auth/oidc/callback', [\App\Http\Controllers\Auth\SsoController::class, 'callback'])->name('sso.callback');
 
-// Protected Routes
+// 2FA Challenge Routes (ต้อง login ด้วย password ก่อน)
+Route::middleware(['2fa.challenge', 'throttle:5,1'])->group(function () {
+    Route::get('/auth/2fa/challenge', [\App\Http\Controllers\Auth\Google2faController::class, 'challenge'])->name('google2fa.challenge');
+    Route::post('/auth/2fa/verify', [\App\Http\Controllers\Auth\Google2faController::class, 'verify'])->name('google2fa.verify');
+});
+
+// Protected Routes (ต้อง login แล้ว)
 Route::middleware(['auth'])->group(function () {
     // แดชบอร์ดหลัก
     Route::get('/', [LegalCaseController::class, 'dashboard'])->name('dashboard');
@@ -57,15 +64,26 @@ Route::middleware(['auth'])->group(function () {
     // รายงาน
     Route::get('/report', [ReportController::class, 'index'])->name('reports.index');
 
-    // จัดการข้อมูลผู้ใช้งาน
-    Route::get('/setting-user', [SettingUserController::class, 'index'])->name('users.index');
-    Route::post('/setting-user', [SettingUserController::class, 'store'])->name('users.store');
-    Route::put('/setting-user/{id}', [SettingUserController::class, 'update'])->name('users.update');
-    Route::delete('/setting-user/{id}', [SettingUserController::class, 'destroy'])->name('users.destroy');
-    Route::patch('/setting-user/{id}/toggle', [SettingUserController::class, 'toggleStatus'])->name('users.toggle');
+    // ดาวน์โหลดไฟล์เอกสาร (ผ่าน auth)
+    Route::get('/files/download/{path}', [FileController::class, 'download'])->name('files.download')->where('path', '.*');
+    Route::get('/files/view/{path}', [FileController::class, 'view'])->name('files.view')->where('path', '.*');
 
-    // ตั้งค่าการแจ้งเตือน Telegram (Admin)
-    Route::get('/admin/telegram', [\App\Http\Controllers\SettingTelegramController::class, 'index'])->name('settings.telegram.index');
-    Route::post('/admin/telegram', [\App\Http\Controllers\SettingTelegramController::class, 'update'])->name('settings.telegram.update');
-    Route::post('/admin/telegram/test', [\App\Http\Controllers\SettingTelegramController::class, 'testNotification'])->name('settings.telegram.test');
+    // 2FA Setup (ต้อง login แล้วถึงจะ setup ได้)
+    Route::get('/auth/2fa/generate-setup', [\App\Http\Controllers\Auth\Google2faController::class, 'generateSetupQr'])->name('google2fa.generate_setup');
+    Route::get('/auth/2fa/setup/{username}', [\App\Http\Controllers\Auth\Google2faController::class, 'setup'])->name('google2fa.setup');
+    Route::post('/auth/2fa/setup/confirm', [\App\Http\Controllers\Auth\Google2faController::class, 'confirmSetup'])->name('google2fa.setup.confirm');
+
+    // จัดการข้อมูลผู้ใช้งาน (เฉพาะ Admin)
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/setting-user', [SettingUserController::class, 'index'])->name('users.index');
+        Route::post('/setting-user', [SettingUserController::class, 'store'])->name('users.store');
+        Route::put('/setting-user/{id}', [SettingUserController::class, 'update'])->name('users.update');
+        Route::delete('/setting-user/{id}', [SettingUserController::class, 'destroy'])->name('users.destroy');
+        Route::patch('/setting-user/{id}/toggle', [SettingUserController::class, 'toggleStatus'])->name('users.toggle');
+
+        // ตั้งค่าการแจ้งเตือน Telegram (Admin)
+        Route::get('/admin/telegram', [\App\Http\Controllers\SettingTelegramController::class, 'index'])->name('settings.telegram.index');
+        Route::post('/admin/telegram', [\App\Http\Controllers\SettingTelegramController::class, 'update'])->name('settings.telegram.update');
+        Route::post('/admin/telegram/test', [\App\Http\Controllers\SettingTelegramController::class, 'testNotification'])->name('settings.telegram.test');
+    });
 });

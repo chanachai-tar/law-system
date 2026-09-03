@@ -429,6 +429,12 @@ class LegalCaseController extends Controller
 
     public function closeCase(Request $request, $id)
     {
+        $request->validate([
+            'outcome_summary' => 'nullable|string|max:5000',
+            'penalty_type' => 'nullable|string|max:255',
+            'damage_amount' => 'nullable|numeric|min:0',
+        ]);
+
         $case = LegalCase::findOrFail($id);
         $case->status = 'completed'; // กำหนดค่าสถานะ
 
@@ -500,9 +506,13 @@ class LegalCaseController extends Controller
         }
 
         // บันทึกไฟล์ใหม่สำหรับขั้นตอนนี้
+        $request->validate([
+            'files.*' => 'file|mimes:pdf,doc,docx,xlsx,xls,jpg,jpeg,png|max:10240',
+        ]);
+
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
-                $path = $file->store('cases/' . $case->id . '/step_' . $step->step_num, 'public');
+                $path = $file->store('cases/' . $case->id . '/step_' . $step->step_num, 'local');
                 $step->files()->create([
                     'file_path' => $path,
                     'file_name' => $file->getClientOriginalName(),

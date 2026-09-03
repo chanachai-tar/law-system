@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
     \App\Models\User::create([
         'name' => 'เจ้าหน้าที่นิติกร',
         'username' => 'admin',
+        'email' => 'admin@odpc10.local',
         'password' => \Illuminate\Support\Facades\Hash::make('123456'),
     ]);
 }

@@ -34,8 +34,7 @@ class SettingTelegramController extends Controller
 
         if (!empty($botToken)) {
             try {
-                $res = Http::withOptions(['verify' => false])
-                    ->timeout(4)
+                $res = Http::timeout(4)
                     ->get("https://api.telegram.org/bot{$botToken}/getMe");
 
                 if ($res->successful() && $res->json('ok')) {

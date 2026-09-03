@@ -32,16 +32,13 @@ class SsoController extends Controller
             $nickname = $oidcUser->nickname ?? $oidcUser->id;
             $name = $oidcUser->name ?? $nickname;
 
-            // ค้นหาผู้ใช้งานจาก Email, Username หรือ Name
-            $user = User::where(function ($query) use ($email, $nickname, $name) {
+            // ค้นหาผู้ใช้งานจาก Email, Username
+            $user = User::where(function ($query) use ($email, $nickname) {
                 if (!empty($email)) {
                     $query->where('email', $email);
                 }
                 if (!empty($nickname)) {
                     $query->orWhere('username', $nickname);
-                }
-                if (!empty($name)) {
-                    $query->orWhere('name', $name);
                 }
             })->first();
 
@@ -76,7 +73,7 @@ class SsoController extends Controller
 
         } catch (\Throwable $e) {
             Log::error('SSO Callback Error: ' . $e->getMessage());
-            return redirect()->route('login')->withErrors(['username' => 'เกิดข้อผิดพลาดในการเชื่อมต่อเข้าสู่ระบบ SSO (' . $e->getMessage() . ')']);
+            return redirect()->route('login')->withErrors(['username' => 'เกิดข้อผิดพลาดในการเชื่อมต่อเข้าสู่ระบบ SSO']);
         }
     }
 }

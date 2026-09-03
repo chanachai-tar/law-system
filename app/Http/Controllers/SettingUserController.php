@@ -17,27 +17,38 @@ class SettingUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users,username,',
-            'password' => 'required|min:6',
-            'role' => 'required'
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:150|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|in:admin,officer,staff'
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'role' => $request->role, // เพิ่มบรรทัดนี้
-            'password' => Hash::make($request->password),
-            'is_active' => 1
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = $request->role;
+        $user->is_active = 1;
+        $user->save();
 
         return back()->with('success', 'เพิ่มเจ้าหน้าที่เรียบร้อยแล้ว');
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|string|in:admin,officer,staff',
+            'password' => 'nullable|string|min:8',
+        ]);
+
         $user = User::findOrFail($id);
         $user->name = $request->name;
-        $user->role = $request->role; // เพิ่มบรรทัดนี้
+        $user->email = $request->email;
+        $user->role = $request->role;
 
         if ($request->password) {
             $user->password = Hash::make($request->password);

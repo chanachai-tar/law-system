@@ -216,23 +216,7 @@
                     </a>
                 @endif
 
-                <!-- Telegram Notification Banner in Sidebar -->
-                <div class="pt-4 px-1">
-                    <button type="button" onclick="openTelegramModal()"
-                        class="w-full flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/20 hover:opacity-95 transition-all group active:scale-95">
-                        <div class="flex items-center gap-2.5 text-left">
-                            <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg flex-shrink-0">
-                                <i class="ri-telegram-fill" aria-hidden="true"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold leading-tight">แจ้งเตือน Telegram</p>
-                                <p class="text-[10px] text-sky-100 font-light">สแกนรับอัปเดตสำนวน</p>
-                            </div>
-                        </div>
-                        <i class="ri-qr-code-line text-lg text-sky-100 group-hover:scale-110 transition-transform" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </nav>
+                                </nav>
 
             <!-- Sidebar Footer -->
             <div class="mt-auto border-t border-slate-100 bg-slate-50/70 p-3.5 text-center">
@@ -285,10 +269,24 @@
                                 <p class="text-[11px] text-slate-500 truncate">{{ Auth::user()?->username ?? '' }}</p>
                             </div>
 
-                            <a href="{{ route('logout') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold transition" role="menuitem">
-                                <i class="ri-logout-box-r-line text-sm" aria-hidden="true"></i>
-                                <span>ออกจากระบบ</span>
+
+                            @if(Auth::check())
+                            <a href="{{ route('google2fa.setup', ['username' => Auth::user()->username]) }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 hover:text-indigo-600 font-semibold transition" role="menuitem">
+                                <i class="ri-shield-keyhole-line text-sm" aria-hidden="true"></i>
+                                <span>ตั้งค่า Google Auth (2FA)</span>
                             </a>
+                            <button type="button" onclick="openTelegramModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 hover:text-sky-600 font-semibold transition text-left" role="menuitem">
+                                <i class="ri-telegram-line text-sm" aria-hidden="true"></i>
+                                <span>แจ้งเตือน Telegram</span>
+                            </button>
+                            @endif
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold transition" role="menuitem">
+                                    <i class="ri-logout-box-r-line text-sm" aria-hidden="true"></i>
+                                    <span>ออกจากระบบ</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -318,7 +316,7 @@
 
                 try {
                     // Listen to Reverb / Echo Events
-                    window.Echo.channel('law-system-channel')
+                    window.Echo.private('law-system-channel')
                         .listen('.case.created', function (e) {
                             showSocketToast('มีสำนวนใหม่', e.message, 'ri-folder-add-line', 'indigo', '/cases');
                         })
@@ -359,32 +357,62 @@
                 const container = document.getElementById('socket-toast-container');
                 if (!container) return;
 
-                const colors = {
-                    indigo: 'bg-indigo-50 border-indigo-200 text-indigo-800 icon-indigo',
-                    amber: 'bg-amber-50 border-amber-200 text-amber-800 icon-amber',
-                    emerald: 'bg-emerald-50 border-emerald-200 text-emerald-800 icon-emerald',
-                    sky: 'bg-sky-50 border-sky-200 text-sky-800 icon-sky'
-                };
-
                 const toast = document.createElement('div');
                 toast.className = `pointer-events-auto bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-200/80 flex items-start gap-3 transition-all duration-300 transform translate-y-4 opacity-0`;
 
-                toast.innerHTML = `
-                    <div class="w-9 h-9 rounded-xl bg-${color}-50 text-${color}-600 flex items-center justify-center flex-shrink-0 text-lg border border-${color}-100">
-                        <i class="${iconClass}" aria-hidden="true"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <h4 class="text-xs font-bold text-slate-800">${title}</h4>
-                            <span class="text-[9px] text-slate-500">เมื่อสักครู่</span>
-                        </div>
-                        <p class="text-[11px] text-slate-600 mt-0.5 leading-snug line-clamp-2">${message}</p>
-                        ${linkUrl ? `<a href="${linkUrl}" class="inline-flex items-center gap-1 text-[10px] font-bold text-${color}-600 hover:underline mt-1.5">คลิกเพื่อดู <i class="ri-arrow-right-line" aria-hidden="true"></i></a>` : ''}
-                    </div>
-                    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 p-0.5" aria-label="ปิดการแจ้งเตือน">
-                        <i class="ri-close-line text-sm" aria-hidden="true"></i>
-                    </button>
-                `;
+                // Icon container
+                const iconDiv = document.createElement('div');
+                iconDiv.className = `w-9 h-9 rounded-xl bg-${color}-50 text-${color}-600 flex items-center justify-center flex-shrink-0 text-lg border border-${color}-100`;
+                const icon = document.createElement('i');
+                icon.className = iconClass;
+                icon.setAttribute('aria-hidden', 'true');
+                iconDiv.appendChild(icon);
+                toast.appendChild(iconDiv);
+
+                // Content container
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'flex-1 min-w-0';
+
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex items-center justify-between';
+                const titleEl = document.createElement('h4');
+                titleEl.className = 'text-xs font-bold text-slate-800';
+                titleEl.textContent = title;
+                const timeEl = document.createElement('span');
+                timeEl.className = 'text-[9px] text-slate-500';
+                timeEl.textContent = '\u0e40\u0e21\u0e37\u0e48\u0e2d\u0e2a\u0e31\u0e01\u0e04\u0e23\u0e39\u0e48';
+                headerDiv.appendChild(titleEl);
+                headerDiv.appendChild(timeEl);
+                contentDiv.appendChild(headerDiv);
+
+                const msgEl = document.createElement('p');
+                msgEl.className = 'text-[11px] text-slate-600 mt-0.5 leading-snug line-clamp-2';
+                msgEl.textContent = message;
+                contentDiv.appendChild(msgEl);
+
+                if (linkUrl) {
+                    const linkEl = document.createElement('a');
+                    linkEl.href = linkUrl;
+                    linkEl.className = `inline-flex items-center gap-1 text-[10px] font-bold text-${color}-600 hover:underline mt-1.5`;
+                    linkEl.textContent = '\u0e04\u0e25\u0e34\u0e01\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e14\u0e39 ';
+                    const arrowIcon = document.createElement('i');
+                    arrowIcon.className = 'ri-arrow-right-line';
+                    arrowIcon.setAttribute('aria-hidden', 'true');
+                    linkEl.appendChild(arrowIcon);
+                    contentDiv.appendChild(linkEl);
+                }
+                toast.appendChild(contentDiv);
+
+                // Close button
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'text-slate-400 hover:text-slate-600 p-0.5';
+                closeBtn.setAttribute('aria-label', '\u0e1b\u0e34\u0e14\u0e01\u0e32\u0e23\u0e41\u0e08\u0e49\u0e07\u0e40\u0e15\u0e37\u0e2d\u0e19');
+                closeBtn.addEventListener('click', function() { toast.remove(); });
+                const closeIcon = document.createElement('i');
+                closeIcon.className = 'ri-close-line text-sm';
+                closeIcon.setAttribute('aria-hidden', 'true');
+                closeBtn.appendChild(closeIcon);
+                toast.appendChild(closeBtn);
 
                 container.appendChild(toast);
 
