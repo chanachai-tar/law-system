@@ -10,7 +10,11 @@ class SettingUserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        if (auth()->user()?->role !== 'super_admin') {
+            $users = User::where('role', '!=', 'super_admin')->get();
+        } else {
+            $users = User::all();
+        }
         return view('settings.users.index', compact('users'));
     }
 
@@ -21,8 +25,12 @@ class SettingUserController extends Controller
             'username' => 'required|string|max:150|unique:users,username',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
-            'role' => 'required|string|in:admin,officer,staff'
+            'role' => 'required|string|in:super_admin,admin,officer,staff'
         ]);
+
+        if ($request->role === 'super_admin' && auth()->user()?->role !== 'super_admin') {
+            return back()->with('error', 'คุณไม่มีสิทธิ์สร้างบัญชีระดับ Super Admin ได้');
+        }
 
         $user = new User();
         $user->name = $request->name;
@@ -41,11 +49,20 @@ class SettingUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'role' => 'required|string|in:admin,officer,staff',
+            'role' => 'required|string|in:super_admin,admin,officer,staff',
             'password' => 'nullable|string|min:8',
         ]);
 
         $user = User::findOrFail($id);
+
+        if ($user->role === 'super_admin' && auth()->user()?->role !== 'super_admin') {
+            return back()->with('error', 'คุณไม่มีสิทธิ์แก้ไขข้อมูลของ Super Admin');
+        }
+
+        if ($request->role === 'super_admin' && auth()->user()?->role !== 'super_admin') {
+            return back()->with('error', 'คุณไม่มีสิทธิ์กำหนดบทบาทเป็น Super Admin ได้');
+        }
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
@@ -61,6 +78,14 @@ class SettingUserController extends Controller
     public function toggleStatus(Request $request, $id)
     {
         $user = User::findOrFail($id);
+
+        if ($user->role === 'super_admin' && auth()->user()?->role !== 'super_admin') {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'คุณไม่มีสิทธิ์จัดการข้อมูลของ Super Admin'], 403);
+            }
+            return back()->with('error', 'คุณไม่มีสิทธิ์จัดการข้อมูลของ Super Admin');
+        }
+
         $user->is_active = !$user->is_active; // สลับสถานะ 0 เป็น 1 หรือ 1 เป็น 0
         $user->save();
 
@@ -77,9 +102,16 @@ class SettingUserController extends Controller
 
     public function destroy($id)
     {
+        $user = User::findOrFail($id);
+
         if ($id == auth()->id()) {
             return back()->with('error', 'ไม่สามารถลบตัวเองได้');
         }
+
+        if ($user->role === 'super_admin' && auth()->user()?->role !== 'super_admin') {
+            return back()->with('error', 'คุณไม่มีสิทธิ์ลบข้อมูลของ Super Admin');
+        }
+
         User::destroy($id);
         return back()->with('success', 'ลบเจ้าหน้าที่เรียบร้อยแล้ว');
     }

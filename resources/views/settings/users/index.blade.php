@@ -26,11 +26,34 @@
         </button>
     </div>
 
-    <!-- Flash Message -->
+    <!-- Flash Message (Success) -->
     @if(session('success'))
         <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl shadow-sm flex items-center gap-3">
             <i class="ri-checkbox-circle-fill text-emerald-600 text-xl"></i>
             <span class="text-xs font-semibold">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    <!-- Flash Message (Error) -->
+    @if(session('error'))
+        <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl shadow-sm flex items-center gap-3">
+            <i class="ri-error-warning-fill text-rose-600 text-xl"></i>
+            <span class="text-xs font-semibold">{{ session('error') }}</span>
+        </div>
+    @endif
+
+    <!-- Error Messages -->
+    @if($errors->any())
+        <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl shadow-sm">
+            <div class="flex items-center gap-3 mb-2">
+                <i class="ri-error-warning-fill text-rose-600 text-xl"></i>
+                <span class="text-xs font-bold">พบข้อผิดพลาดในการบันทึกข้อมูล:</span>
+            </div>
+            <ul class="list-disc list-inside text-xs pl-7 space-y-1 text-rose-700">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
@@ -62,7 +85,11 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($user->role == 'admin')
+                                @if($user->role == 'super_admin')
+                                    <span class="px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg text-[11px] font-bold border border-rose-200">
+                                        <i class="ri-shield-star-fill mr-1" aria-hidden="true"></i> ผู้ดูแลระบบสูงสุด (Super Admin)
+                                    </span>
+                                @elseif($user->role == 'admin')
                                     <span class="px-2.5 py-1 bg-purple-50 text-purple-700 rounded-lg text-[11px] font-bold border border-purple-200">
                                         <i class="ri-shield-star-line mr-1" aria-hidden="true"></i> ผู้ดูแลระบบ (Admin)
                                     </span>
@@ -166,6 +193,9 @@
                     class="w-full h-10 px-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-xs transition">
                     <option value="staff">Staff / นิติกร (ดูและจัดการสำนวน)</option>
                     <option value="admin">Administrator (จัดการระบบและผู้ใช้)</option>
+                    @if(auth()->user()?->role === 'super_admin')
+                        <option value="super_admin">Super Admin (ผู้ดูแลระบบสูงสุด)</option>
+                    @endif
                 </select>
             </div>
 

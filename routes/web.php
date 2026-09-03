@@ -91,4 +91,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/telegram', [\App\Http\Controllers\SettingTelegramController::class, 'update'])->name('settings.telegram.update');
         Route::post('/admin/telegram/test', [\App\Http\Controllers\SettingTelegramController::class, 'testNotification'])->name('settings.telegram.test');
     });
+
+    Route::middleware(['super_admin'])->group(function () {
+        Route::get('/super-admin', [\App\Http\Controllers\SuperAdminController::class, 'index'])->name('superadmin.index');
+    });
 });

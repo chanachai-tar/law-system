@@ -95,8 +95,21 @@
                     <div class="h-px bg-slate-100 mx-2"></div>
                 </div>
 
-                <!-- หมวด: ทะเบียนเลขคำสั่ง -->
-                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-1.5">ทะเบียนเลขคำสั่งหน่วยงาน</div>
+                <!-- หมวด: คำสั่งแต่งตั้งคณะกรรมการ -->
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-1.5">คำสั่งแต่งตั้งคณะกรรมการ</div>
+
+                <a href="{{ route('orders.index') }}"
+                    class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 group {{ request()->routeIs('orders.*') ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200' : 'hover:bg-slate-100 hover:text-slate-900' }}">
+                    <i class="ri-file-list-3-line text-base {{ request()->routeIs('orders.*') ? 'text-white' : 'text-slate-500 group-hover:text-indigo-600' }}" aria-hidden="true"></i>
+                    <span>คำสั่งแต่งตั้งคณะกรรมการ</span>
+                </a>
+
+                <div class="pt-3 pb-1">
+                    <div class="h-px bg-slate-100 mx-2"></div>
+                </div>
+
+                <!-- หมวด: ทะเบียนสำนวนกฎหมาย -->
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-1.5">ทะเบียนสำนวนกฎหมาย</div>
 
                 <!-- ตส. (ID=1) -->
                 <a href="{{ route('cases.index', ['law_type' => 1]) }}"
@@ -153,14 +166,8 @@
                     <div class="h-px bg-slate-100 mx-2"></div>
                 </div>
 
-                <!-- หมวด: คำสั่งและรายงาน -->
-                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-1.5">เอกสาร & สรุปผล</div>
-
-                <a href="{{ route('orders.index') }}"
-                    class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 group {{ request()->routeIs('orders.*') ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200' : 'hover:bg-slate-100 hover:text-slate-900' }}">
-                    <i class="ri-file-list-3-line text-base {{ request()->routeIs('orders.*') ? 'text-white' : 'text-slate-500 group-hover:text-indigo-600' }}" aria-hidden="true"></i>
-                    <span>คำสั่งแต่งตั้งคณะกรรมการ</span>
-                </a>
+                <!-- หมวด: เอกสารและรายงาน -->
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-1.5">รายงาน & คลังข้อมูล</div>
 
                 <a href="{{ route('reports.index') }}"
                     class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 group {{ request()->routeIs('reports.*') ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200' : 'hover:bg-slate-100 hover:text-slate-900' }}">
@@ -207,7 +214,7 @@
                     </span>
                 </a>
 
-                @if (Auth::user()?->role === 'admin')
+                @if (in_array(Auth::user()?->role, ['admin', 'super_admin']))
                     <div class="pt-3 pb-1">
                         <div class="h-px bg-slate-100 mx-2"></div>
                     </div>
@@ -221,6 +228,18 @@
                         class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 group {{ request()->routeIs('settings.telegram.*') ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200' : 'hover:bg-slate-100 hover:text-slate-900' }}">
                         <i class="ri-telegram-fill text-base {{ request()->routeIs('settings.telegram.*') ? 'text-white' : 'text-slate-500 group-hover:text-indigo-600' }}" aria-hidden="true"></i>
                         <span>ตั้งค่าการแจ้งเตือน Telegram</span>
+                    </a>
+                @endif
+                
+                @if (Auth::user()?->role === 'super_admin')
+                    <div class="pt-3 pb-1">
+                        <div class="h-px bg-slate-100 mx-2"></div>
+                    </div>
+                    <div class="text-[10px] font-bold text-rose-500 uppercase tracking-wider px-3 mb-1.5">Super Admin</div>
+                    <a href="{{ route('superadmin.index') }}"
+                        class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 group {{ request()->routeIs('superadmin.*') ? 'bg-rose-600 text-white shadow-sm shadow-rose-200' : 'hover:bg-slate-100 hover:text-slate-900' }}">
+                        <i class="ri-shield-star-fill text-base {{ request()->routeIs('superadmin.*') ? 'text-white' : 'text-slate-500 group-hover:text-rose-600' }}" aria-hidden="true"></i>
+                        <span>การจัดการระบบขั้นสูง</span>
                     </a>
                 @endif
 

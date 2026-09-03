@@ -10,7 +10,7 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()?->role !== 'admin') {
+        if (!in_array(auth()->user()?->role, ['admin', 'super_admin'])) {
             abort(403, 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
         }
         return $next($request);
