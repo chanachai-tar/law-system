@@ -316,7 +316,17 @@
         function updateHiddenOtp() {
             const otpInputs = document.querySelectorAll('.otp-input');
             const code = Array.from(otpInputs).map(i => i.value).join('');
-            document.getElementById('actual_totp_code').value = code;
+            const hiddenInput = document.getElementById('actual_totp_code');
+            if (hiddenInput) {
+                hiddenInput.value = code;
+                if (code.length === 6) {
+                    const form = hiddenInput.closest('form');
+                    if (form) {
+                        setLoadingState('otpBtn', 'otpBtnIcon', 'otpBtnText');
+                        form.submit();
+                    }
+                }
+            }
         }
 
         function toggleAuthForm(show) {
@@ -328,6 +338,10 @@
                 options.classList.add('hidden');
                 pwdForm.classList.add('hidden');
                 authForm.classList.remove('hidden');
+                setTimeout(() => { 
+                    const firstOtp = authForm.querySelector('.otp-input');
+                    if(firstOtp) firstOtp.focus(); 
+                }, 100);
             } else {
                 authForm.classList.add('hidden');
                 options.classList.remove('hidden');

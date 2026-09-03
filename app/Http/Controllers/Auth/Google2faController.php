@@ -27,21 +27,34 @@ class Google2faController extends Controller
         }
 
         $google2fa = new Google2FA();
+        $userId = session('2fa:user_id');
         
-        // Loop through all active users with a 2FA secret
-        $users = User::whereNotNull('two_factor_secret')->where('is_active', 1)->get();
-        
-        foreach ($users as $user) {
-            try {
-                // If the 6-digit code matches this user's secret
-                if ($user->two_factor_secret && $google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
-                    Auth::login($user);
-                    $request->session()->regenerate();
-                    return redirect()->intended('/');
+        if ($userId) {
+            // Flow 1: 2-Step Login (Password -> 2FA)
+            $user = User::find($userId);
+            if ($user && $user->two_factor_secret) {
+                try {
+                    if ($google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
+                        session()->forget('2fa:user_id');
+                        Auth::login($user);
+                        $request->session()->regenerate();
+                        return redirect()->intended('/');
+                    }
+                } catch (\Exception $e) {}
+            }
+        } else {
+            // Flow 2: Direct 2FA Login
+            $users = User::whereNotNull('two_factor_secret')->where('is_active', 1)->get();
+            foreach ($users as $user) {
+                try {
+                    if ($user->two_factor_secret && $google2fa->verifyKey($user->two_factor_secret, $request->totp_code)) {
+                        Auth::login($user);
+                        $request->session()->regenerate();
+                        return redirect()->intended('/');
+                    }
+                } catch (\Exception $e) {
+                    continue;
                 }
-            } catch (\Exception $e) {
-                // Ignore decryption errors for individual users and continue checking others
-                continue;
             }
         }
 
@@ -52,7 +65,7 @@ class Google2faController extends Controller
     {
         $userId = session('2fa:user_id');
         if (!$userId) {
-            return redirect('/login')->withErrors(['username' => 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่']);
+            return redirect('/login');
         }
 
         $user = User::find($userId);

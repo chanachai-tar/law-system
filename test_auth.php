@@ -1,0 +1,1 @@
+﻿<?php require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $app->make("Illuminate\Contracts\Console\Kernel")->bootstrap(); $res = Auth::attempt(["username" => "admin", "password" => "123456", "is_active" => 1]); var_dump($res); 
