@@ -14,11 +14,16 @@ class FileController extends Controller
     {
         $filePath = base64_decode($path);
         
+        $disk = 'local';
         if (!Storage::disk('local')->exists($filePath)) {
-            abort(404, 'ไม่พบไฟล์ที่ต้องการ');
+            if (Storage::disk('public')->exists($filePath)) {
+                $disk = 'public';
+            } else {
+                abort(404, 'ไม่พบไฟล์ที่ต้องการ');
+            }
         }
 
-        return Storage::disk('local')->download($filePath);
+        return Storage::disk($disk)->download($filePath);
     }
 
     /**
@@ -28,13 +33,18 @@ class FileController extends Controller
     {
         $filePath = base64_decode($path);
         
+        $disk = 'local';
         if (!Storage::disk('local')->exists($filePath)) {
-            abort(404, 'ไม่พบไฟล์ที่ต้องการ');
+            if (Storage::disk('public')->exists($filePath)) {
+                $disk = 'public';
+            } else {
+                abort(404, 'ไม่พบไฟล์ที่ต้องการ');
+            }
         }
 
-        $mimeType = Storage::disk('local')->mimeType($filePath);
+        $mimeType = Storage::disk($disk)->mimeType($filePath);
         
-        return response(Storage::disk('local')->get($filePath))
+        return response(Storage::disk($disk)->get($filePath))
             ->header('Content-Type', $mimeType)
             ->header('Content-Disposition', 'inline');
     }

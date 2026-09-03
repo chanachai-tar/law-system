@@ -254,7 +254,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-center whitespace-nowrap">
-                                <a href="{{ route('files.download', base64_encode($file->file_path)) }}" target="_blank"
+                                <a href="{{ route('files.view', base64_encode($file->file_path)) }}" target="_blank"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white rounded-xl font-bold text-xs border border-indigo-200/80 transition shadow-sm active:scale-95">
                                     <i class="ri-file-pdf-fill"></i>
                                     <span>เปิดอ่าน PDF</span>

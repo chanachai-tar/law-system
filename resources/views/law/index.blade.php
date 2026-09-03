@@ -351,7 +351,7 @@
                                                     @if ($step->files->count() > 0)
                                                         <div class="flex flex-wrap gap-2 pt-1">
                                                             @foreach ($step->files as $file)
-                                                                <a href="{{ route('files.download', base64_encode($file->file_path)) }}"
+                                                                <a href="{{ route('files.view', base64_encode($file->file_path)) }}"
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     class="inline-flex items-center gap-2 px-3 py-1.5 bg-white text-rose-600 rounded-xl border border-rose-200/80 text-[11px] font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm">

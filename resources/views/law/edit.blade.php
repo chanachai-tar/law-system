@@ -143,7 +143,7 @@
                         @if ($step->files->count() > 0)
                             <div class="flex flex-wrap gap-2 pt-1">
                                 @foreach ($step->files as $file)
-                                    <a href="{{ route('files.download', base64_encode($file->file_path)) }}" target="_blank" rel="noopener noreferrer"
+                                    <a href="{{ route('files.view', base64_encode($file->file_path)) }}" target="_blank" rel="noopener noreferrer"
                                         class="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-rose-600 rounded-xl border border-rose-200 text-[11px] font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm">
                                         <i class="ri-file-pdf-fill text-xs" aria-hidden="true"></i>
                                         <span>เปิดเอกสาร PDF</span>
